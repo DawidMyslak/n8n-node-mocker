@@ -1,0 +1,51 @@
+# n8n-node-mocker configuration
+# Copy this file to config.yaml and adjust as needed.
+
+port: 9090
+fixturesDir: ./fixtures
+caDir: ~/.n8n-node-mocker
+
+# Per-service signing secrets.
+# These must match the secrets configured in n8n credentials
+# for signature verification to pass.
+services:
+  linear:
+    signingSecret: "test-secret-linear"
+  typeform:
+    signingSecret: "test-secret-typeform"
+  figma:
+    signingSecret: "test-secret-figma"
+  gitlab:
+    signingSecret: "test-secret-gitlab"
+  trello:
+    signingSecret: "test-secret-trello"
+  twilio:
+    signingSecret: "test-secret-twilio"
+  asana:
+    signingSecret: "test-secret-asana"
+  netlify:
+    signingSecret: "test-secret-netlify"
+  acuityscheduling:
+    signingSecret: "test-secret-acuity"
+  awssns:
+    signingSecret: "test-secret-awssns"
+  box:
+    signingSecret: "test-secret-box"
+  cal:
+    signingSecret: "test-secret-cal"
+  calendly:
+    signingSecret: "test-secret-calendly"
+  customerio:
+    signingSecret: "test-secret-customerio"
+  formstack:
+    signingSecret: "test-secret-formstack"
+  mailerlite:
+    signingSecret: "test-secret-mailerlite"
+  mautic:
+    signingSecret: "test-secret-mautic"
+  microsoftteams:
+    signingSecret: "test-secret-msteams"
+  onfleet:
+    signingSecret: "test-secret-onfleet"
+  taiga:
+    signingSecret: "test-secret-taiga"

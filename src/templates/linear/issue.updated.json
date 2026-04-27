@@ -1,0 +1,41 @@
+{
+  "action": "update",
+  "createdAt": "2026-04-27T10:05:00.000Z",
+  "type": "Issue",
+  "organizationId": "org-test-001",
+  "data": {
+    "id": "issue-test-001",
+    "identifier": "TEST-42",
+    "title": "Test issue updated by n8n-node-mocker",
+    "description": "This issue was updated.",
+    "priority": 2,
+    "priorityLabel": "High",
+    "state": {
+      "id": "state-002",
+      "name": "In Progress",
+      "type": "started"
+    },
+    "team": {
+      "id": "team-001",
+      "name": "Engineering",
+      "key": "ENG"
+    },
+    "creator": {
+      "id": "user-001",
+      "name": "Test User"
+    },
+    "assignee": {
+      "id": "user-002",
+      "name": "Assigned User"
+    },
+    "labels": [],
+    "createdAt": "2026-04-27T10:00:00.000Z",
+    "updatedAt": "2026-04-27T10:05:00.000Z"
+  },
+  "updatedFrom": {
+    "priority": 3,
+    "stateId": "state-001",
+    "updatedAt": "2026-04-27T10:00:00.000Z"
+  },
+  "url": "https://linear.app/test/issue/TEST-42"
+}

@@ -1,0 +1,24 @@
+{
+  "action": "create",
+  "createdAt": "2026-04-27T10:10:00.000Z",
+  "type": "Comment",
+  "organizationId": "org-test-001",
+  "data": {
+    "id": "comment-test-001",
+    "body": "This is a test comment from n8n-node-mocker.",
+    "issueId": "issue-test-001",
+    "userId": "user-001",
+    "createdAt": "2026-04-27T10:10:00.000Z",
+    "updatedAt": "2026-04-27T10:10:00.000Z",
+    "issue": {
+      "id": "issue-test-001",
+      "identifier": "TEST-42",
+      "title": "Test issue"
+    },
+    "user": {
+      "id": "user-001",
+      "name": "Test User"
+    }
+  },
+  "url": "https://linear.app/test/issue/TEST-42#comment-test-001"
+}

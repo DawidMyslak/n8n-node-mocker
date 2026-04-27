@@ -1,0 +1,33 @@
+{
+  "action": "create",
+  "createdAt": "2026-04-27T10:00:00.000Z",
+  "type": "Issue",
+  "organizationId": "org-test-001",
+  "data": {
+    "id": "issue-test-001",
+    "identifier": "TEST-42",
+    "title": "Test issue created by n8n-node-mocker",
+    "description": "This is a simulated issue creation event.",
+    "priority": 3,
+    "priorityLabel": "Medium",
+    "state": {
+      "id": "state-001",
+      "name": "Backlog",
+      "type": "backlog"
+    },
+    "team": {
+      "id": "team-001",
+      "name": "Engineering",
+      "key": "ENG"
+    },
+    "creator": {
+      "id": "user-001",
+      "name": "Test User"
+    },
+    "assignee": null,
+    "labels": [],
+    "createdAt": "2026-04-27T10:00:00.000Z",
+    "updatedAt": "2026-04-27T10:00:00.000Z"
+  },
+  "url": "https://linear.app/test/issue/TEST-42"
+}

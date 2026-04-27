@@ -1,0 +1,22 @@
+{
+  "name": "n8n-node-mocker",
+  "version": "0.1.0",
+  "description": "MITM proxy + webhook simulator for testing n8n nodes without real API credentials",
+  "type": "module",
+  "bin": {
+    "n8n-node-mocker": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && cp -r src/templates dist/",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["n8n", "mock", "proxy", "webhook", "testing"],
+  "license": "MIT"
+}

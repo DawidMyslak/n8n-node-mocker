@@ -1,0 +1,12 @@
+{
+  "event_type": "FILE_UPDATE",
+  "passcode": "test-passcode",
+  "timestamp": "2026-04-27T10:00:00Z",
+  "webhook_id": "webhook-test-001",
+  "file_key": "file-test-001",
+  "file_name": "Test Design File",
+  "triggered_by": {
+    "id": "user-001",
+    "handle": "testuser"
+  }
+}
