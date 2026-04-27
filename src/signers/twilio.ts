@@ -3,8 +3,11 @@ import { createHmac } from 'node:crypto';
 import type { WebhookSigner, SignResult, SignMeta } from './index.js';
 
 /**
- * Twilio's signature validation hashes the full URL + sorted POST params with the auth token.
- * For webhook simulation, we use the webhookUrl from meta + the body params.
+ * Twilio signs webhooks using HMAC-SHA1, base64-encoded.
+ * The signed data is the full webhook URL + sorted POST params (key+value pairs).
+ * The secret is the account's auth token.
+ *
+ * @see https://www.twilio.com/docs/usage/webhooks/webhooks-security
  */
 export const twilioSigner: WebhookSigner = {
 	service: 'twilio',

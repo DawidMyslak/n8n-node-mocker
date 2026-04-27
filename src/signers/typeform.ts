@@ -2,6 +2,13 @@ import { createHmac } from 'node:crypto';
 
 import type { WebhookSigner, SignResult } from './index.js';
 
+/**
+ * Typeform signs webhooks using HMAC-SHA256 of the raw body.
+ * The signature is base64-encoded with a `sha256=` prefix,
+ * sent in the `Typeform-Signature` header.
+ *
+ * @see https://www.typeform.com/developers/webhooks/secure-your-webhooks/
+ */
 export const typeformSigner: WebhookSigner = {
 	service: 'typeform',
 	description: 'HMAC-SHA256, base64, sha256= prefix, typeform-signature header',

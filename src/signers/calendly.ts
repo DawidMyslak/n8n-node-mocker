@@ -2,6 +2,12 @@ import { createHmac } from 'node:crypto';
 
 import type { WebhookSigner, SignResult, SignMeta } from './index.js';
 
+/**
+ * Calendly signs webhooks using HMAC-SHA256 of `timestamp.body`, hex-encoded.
+ * The header format is `Calendly-Webhook-Signature: t=<ts>,v1=<sig>`.
+ *
+ * @see https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures
+ */
 export const calendlySigner: WebhookSigner = {
 	service: 'calendly',
 	description: 'HMAC-SHA256, hex, Calendly-Webhook-Signature header (t=timestamp,v1=sig)',

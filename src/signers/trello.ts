@@ -2,6 +2,13 @@ import { createHmac } from 'node:crypto';
 
 import type { WebhookSigner, SignResult, SignMeta } from './index.js';
 
+/**
+ * Trello signs webhooks using HMAC-SHA1, base64-encoded.
+ * The signed data is the concatenation of the JSON body + the callbackURL.
+ * The secret is the application's OAuth secret.
+ *
+ * @see https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/#webhook-signatures
+ */
 export const trelloSigner: WebhookSigner = {
 	service: 'trello',
 	description: 'HMAC-SHA1, base64, x-trello-webhook header (body + callbackURL)',

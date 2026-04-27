@@ -67,6 +67,20 @@ Identify:
 
 Create `src/signers/<service-name>.ts`. Use an existing signer as a template.
 
+**Every signer must include a JSDoc `@see` link to the official API
+documentation for the service's webhook signature verification.** This is
+mandatory -- it allows future maintainers to re-verify the implementation.
+Example:
+
+```typescript
+/**
+ * Linear signs webhooks using HMAC-SHA256 of the raw request body.
+ * The hex-encoded signature is sent in the `Linear-Signature` header.
+ *
+ * @see https://linear.app/developers/webhooks
+ */
+```
+
 The most common pattern (HMAC-SHA256, hex, custom header):
 
 ```typescript
@@ -147,7 +161,7 @@ pnpm test    # verify all tests pass
 ## Checklist for Adding a Service
 
 - [ ] Research: read the n8n trigger node + service webhook docs
-- [ ] Create `src/signers/<name>.ts` implementing `WebhookSigner`
+- [ ] Create `src/signers/<name>.ts` implementing `WebhookSigner` with `@see` URL to official API docs
 - [ ] Register in `src/signers/index.ts`
 - [ ] Add event templates in `src/templates/<name>/`
 - [ ] Add default secret in `src/config.ts` and `config.example.yaml`

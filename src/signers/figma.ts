@@ -1,23 +1,27 @@
-import { createHmac } from 'node:crypto';
+import type { WebhookSigner, SignResult } from './index.js';
 
-import type { WebhookSigner, SignResult, SignMeta } from './index.js';
-
+/**
+ * Figma uses passcode-based verification, NOT HMAC signatures.
+ * When creating a webhook, you provide a `passcode` field.
+ * Figma sends this passcode back in each webhook event payload.
+ * The receiver compares the passcode in the event with the one
+ * it originally provided to verify authenticity.
+ *
+ * @see https://developers.figma.com/docs/rest-api/webhooks-security/
+ */
 export const figmaSigner: WebhookSigner = {
 	service: 'figma',
-	description: 'HMAC-SHA256, hex digest, x-figma-signature header',
-	signatureAlgorithm: 'HMAC-SHA256',
-	signatureHeader: 'x-figma-signature',
+	description: 'Passcode verification -- Figma includes the passcode in each event payload',
+	signatureAlgorithm: 'passcode',
+	signatureHeader: 'n/a (passcode in body)',
 
-	sign(payload: Buffer, secret: string, meta?: SignMeta): SignResult {
-		const timestamp = meta?.timestamp ?? Math.floor(Date.now() / 1000);
-		const hmac = createHmac('sha256', secret);
-		hmac.update(`${timestamp}.${payload.toString('utf-8')}`);
-		const signature = hmac.digest('hex');
-
+	sign(_payload: Buffer, secret: string): SignResult {
 		return {
 			headers: {
-				'x-figma-signature': `t=${timestamp},v1=${signature}`,
 				'content-type': 'application/json',
+			},
+			bodyPatch: {
+				passcode: secret,
 			},
 		};
 	},
