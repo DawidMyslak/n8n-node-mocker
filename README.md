@@ -165,7 +165,7 @@ services:
 
 ## Supported Services (20)
 
-All webhook trigger nodes from [NODE-4297](https://linear.app/n8n/issue/NODE-4297):
+All n8n webhook trigger nodes that support signature verification:
 
 | Service | Algorithm | Signature Header | Notes |
 |---------|-----------|-----------------|-------|
