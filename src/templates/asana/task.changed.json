@@ -1,0 +1,26 @@
+{
+  "events": [
+    {
+      "user": {
+        "gid": "1200000000000001",
+        "resource_type": "user"
+      },
+      "created_at": "2026-04-28T08:00:00.000Z",
+      "action": "changed",
+      "resource": {
+        "gid": "1200000000000099",
+        "resource_type": "task",
+        "resource_subtype": "default_task"
+      },
+      "parent": {
+        "gid": "1200000000000050",
+        "resource_type": "project"
+      },
+      "change": {
+        "field": "completed",
+        "action": "changed",
+        "new_value": true
+      }
+    }
+  ]
+}

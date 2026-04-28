@@ -12,6 +12,7 @@ import { expandHome } from '../config.js';
 import { FixtureStore } from '../fixtures/fixture-store.js';
 import { type CAKeyPair, generateServerCert, loadCA } from './ca.js';
 import { extractGraphQLOperation } from './graphql-parser.js';
+import { runPostResponseHooks } from './service-hooks.js';
 
 interface TlsServerEntry {
 	port: number;
@@ -127,8 +128,9 @@ export class MitmProxy {
 					const headerStr = data.subarray(0, headerEnd).toString();
 					const bodyBuf = data.subarray(headerEnd + 4);
 					const lines = headerStr.split('\r\n');
-					const [method, path] = lines[0].split(' ');
-					console.log(chalk.dim(`  -> ${method} ${hostname}${path}`));
+				const [method, rawPath] = lines[0].split(' ');
+				const path = rawPath.split('?')[0];
+				console.log(chalk.dim(`  -> ${method} ${hostname}${path}`));
 					const headers: Record<string, string> = {};
 
 					for (let i = 1; i < lines.length; i++) {
@@ -215,6 +217,8 @@ export class MitmProxy {
 				error: `No fixture for ${label}. Create a fixture file manually.`,
 			});
 		}
+
+		runPostResponseHooks({ hostname, method, path, bodyStr, config: this.config });
 	}
 
 	private buildSmartFallback(

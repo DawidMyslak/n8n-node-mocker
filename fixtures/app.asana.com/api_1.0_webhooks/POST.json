@@ -1,0 +1,19 @@
+{
+  "response": {
+    "statusCode": 201,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "data": {
+        "gid": "1200000000000777",
+        "resource_type": "webhook",
+        "active": true,
+        "resource": {
+          "gid": "1200000000000099",
+          "resource_type": "task"
+        },
+        "target": "https://localhost:5678/webhook/mock-asana/webhook",
+        "created_at": "2026-04-28T08:00:00.000Z"
+      }
+    }
+  }
+}
