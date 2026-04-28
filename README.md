@@ -238,9 +238,9 @@ Each signer has been verified against the official API documentation.
 
 | Service | Algorithm | Signature Header | Verified Against | Notes |
 |---------|-----------|-----------------|-----------------|-------|
-| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) + n8n code | hex, + `webhookTimestamp` in body |
-| Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) + n8n code | `sha256=` + base64 |
-| Figma | Passcode | (in body) | [API docs](https://developers.figma.com/docs/rest-api/webhooks-security/) + n8n code | Passcode field echoed in event body |
+| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) | hex, + `webhookTimestamp` in body |
+| Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) | `sha256=` + base64 |
+| Figma | Passcode | (in body) | [API docs](https://developers.figma.com/docs/rest-api/webhooks-security/) | Passcode field echoed in event body |
 | GitLab | Token | `x-gitlab-token` | [API docs](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) | Simple token match, not HMAC |
 | Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | base64, signs body + callbackURL |
 | Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | base64, signs URL + sorted params |
