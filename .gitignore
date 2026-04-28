@@ -2,6 +2,5 @@ node_modules/
 dist/
 *.tsbuildinfo
 .n8n-node-mocker/
-fixtures/*
-!fixtures/.gitkeep
+fixtures/local/
 config.yaml

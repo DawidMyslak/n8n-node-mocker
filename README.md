@@ -83,24 +83,49 @@ FALLBACK: GET  api.acuity.com/api/v1/webhooks -> 200 (auto)
 FALLBACK: POST api.linear.app/graphql [IssueCreate] -> 200 (auto)
 ```
 
-### Custom Fixtures
+### Fixtures
 
-If you need a specific endpoint to return a particular response, you can drop a
-JSON fixture file in the `fixtures/` directory. The proxy checks for fixtures
-first and uses the smart fallback only when none is found.
+The `fixtures/` directory ships with built-in realistic responses for common
+follow-up API calls (e.g. fetching appointment details after a webhook fires).
+The proxy checks for a matching fixture first and uses the smart fallback only
+when none is found.
 
-Fixture file structure:
+**Contributing fixtures is encouraged!** If you're testing a service and the
+smart fallback isn't realistic enough, add a fixture file and open a PR.
+More fixtures = better testing experience for everyone.
+
+#### How fixture matching works
+
+URL path segments are joined with `_`. The proxy tries an exact match first,
+then walks up the path tree until it finds one:
+
+```
+GET /api/v1/appointments/12345 →
+  1. fixtures/acuityscheduling.com/api_v1_appointments_12345/GET.json  (exact ID)
+  2. fixtures/acuityscheduling.com/api_v1_appointments/GET.json        (any ID ✓)
+  3. fixtures/acuityscheduling.com/_fallback.json                      (host catch-all)
+```
+
+This means a single fixture at the resource-type level (without the ID) handles
+all IDs under that path.
+
+#### Directory layout
 
 ```
 fixtures/
+  acuityscheduling.com/
+    api_v1_appointments/
+      GET.json              # Matches GET /api/v1/appointments/<any-id>
   api.linear.app/
     graphql/
-      IssueCreate.json    # Matched by GraphQL operation name
+      IssueCreate.json      # Matched by GraphQL operation name
   api.example.com/
     api_v1_users/
-      GET.json            # Matched by HTTP method
-      _fallback.json      # Catch-all for this path
+      GET.json              # Matched by HTTP method
+      _fallback.json        # Catch-all for this path
 ```
+
+#### Fixture file format
 
 Each fixture is a JSON file with a `response` object:
 
@@ -109,10 +134,23 @@ Each fixture is a JSON file with a `response` object:
   "response": {
     "statusCode": 200,
     "headers": { "content-type": "application/json" },
-    "body": { "id": "123", "name": "My Resource" }
+    "body": {
+      "id": 101234567,
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "email": "jane.doe@example.com"
+    }
   }
 }
 ```
+
+#### Adding a fixture
+
+1. Check the proxy logs to see what URL n8n is calling (e.g. `FALLBACK: GET acuityscheduling.com/api/v1/appointments/12345`)
+2. Convert the URL path: replace `/` with `_`, drop the dynamic ID segment
+3. Create the directory and a `GET.json` (or `POST.json`, etc.) inside it
+4. Look at the real API docs for a realistic response shape
+5. Restart the proxy -- fixtures are loaded on each request, no rebuild needed
 
 To get strict 501 errors when no fixture exists (useful for ensuring full
 coverage), set `fallbackMode: error` in `config.yaml`.

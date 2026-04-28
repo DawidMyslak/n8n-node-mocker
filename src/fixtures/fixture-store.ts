@@ -29,7 +29,15 @@ export class FixtureStore {
 
 	/**
 	 * Searches for a fixture matching the given host, path, and optional operation name.
-	 * Falls back to a _fallback.json if no exact match is found.
+	 *
+	 * Lookup order for GET /api/v1/appointments/12345:
+	 *   1. acuityscheduling.com/api_v1_appointments_12345/GET.json  (exact)
+	 *   2. acuityscheduling.com/api_v1_appointments/GET.json        (parent path)
+	 *   3. acuityscheduling.com/api_v1/GET.json                     (grandparent)
+	 *   4. acuityscheduling.com/_fallback.json                      (host-level)
+	 *
+	 * This lets a single fixture like api_v1_appointments/GET.json match any
+	 * resource ID under that path.
 	 */
 	findFixture(
 		host: string,
@@ -38,11 +46,28 @@ export class FixtureStore {
 		operationName: string | null,
 	): Fixture | null {
 		const safePath = path.replace(/^\//, '').replace(/\//g, '_') || 'root';
-		const dir = join(this.baseDir, host, safePath);
 
-		if (!existsSync(dir)) {
-			return null;
+		const result = this.tryFixtureAt(host, safePath, method, operationName);
+		if (result) return result;
+
+		let prefix = safePath;
+		while (prefix.includes('_')) {
+			prefix = prefix.substring(0, prefix.lastIndexOf('_'));
+			const result = this.tryFixtureAt(host, prefix, method, operationName);
+			if (result) return result;
 		}
+
+		return this.load(join(host, '_fallback.json'));
+	}
+
+	private tryFixtureAt(
+		host: string,
+		safePath: string,
+		method: string,
+		operationName: string | null,
+	): Fixture | null {
+		const dir = join(this.baseDir, host, safePath);
+		if (!existsSync(dir)) return null;
 
 		if (operationName) {
 			const fixture = this.load(join(host, safePath, `${operationName}.json`));
@@ -52,8 +77,7 @@ export class FixtureStore {
 		const methodFixture = this.load(join(host, safePath, `${method}.json`));
 		if (methodFixture) return methodFixture;
 
-		const fallback = this.load(join(host, safePath, '_fallback.json'));
-		return fallback;
+		return this.load(join(host, safePath, '_fallback.json'));
 	}
 
 	listFixtures(): string[] {
