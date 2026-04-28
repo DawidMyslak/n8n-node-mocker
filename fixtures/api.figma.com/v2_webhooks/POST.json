@@ -1,0 +1,16 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "id": "mock-figma-webhook-001",
+      "team_id": "12345",
+      "event_type": "FILE_UPDATE",
+      "endpoint": "http://localhost:5678/webhook-test/mock/webhook",
+      "passcode": "test",
+      "status": "ACTIVE",
+      "description": "n8n-webhook",
+      "protocol_version": "2"
+    }
+  }
+}

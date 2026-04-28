@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import chalk from 'chalk';
 import { Command } from 'commander';
 
-import { loadConfig } from '../config.js';
+import { expandHome, loadConfig } from '../config.js';
 import { getSigner, listSigners } from '../signers/index.js';
 
 export const webhookCommand = new Command('webhook')
@@ -42,6 +42,18 @@ webhookCommand
 		if (!serviceConfig) {
 			console.error(chalk.red(`No config found for service "${opts.service}". Add it to config.yaml.`));
 			process.exit(1);
+		}
+
+		// For Figma, auto-detect the captured passcode from the proxy
+		if (opts.service.toLowerCase() === 'figma') {
+			const passcodePath = join(expandHome(config.caDir), 'figma-passcode.txt');
+			if (existsSync(passcodePath)) {
+				const captured = readFileSync(passcodePath, 'utf-8').trim();
+				if (captured) {
+					serviceConfig.signingSecret = captured;
+					console.log(chalk.dim(`  Using captured Figma passcode from ${passcodePath}`));
+				}
+			}
 		}
 
 		let payloadObj: Record<string, unknown>;

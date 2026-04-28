@@ -1,8 +1,11 @@
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { request as httpRequest } from 'node:http';
+import { join } from 'node:path';
 
 import chalk from 'chalk';
 
 import type { Config } from '../config.js';
+import { expandHome } from '../config.js';
 
 /**
  * Service-specific side effects that run after a mock response is sent.
@@ -33,6 +36,14 @@ const hooks: ServiceHook[] = [
 			ctx.path.endsWith('/webhooks') &&
 			ctx.bodyStr !== undefined,
 		run: asanaHandshake,
+	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'api.figma.com' &&
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/webhooks') &&
+			ctx.bodyStr !== undefined,
+		run: figmaCapturePasscode,
 	},
 ];
 
@@ -95,5 +106,35 @@ function asanaHandshake(ctx: ServiceHookContext): void {
 		}, 500);
 	} catch {
 		// Body wasn't JSON or didn't have target
+	}
+}
+
+/**
+ * Figma passcode capture.
+ *
+ * When n8n registers a Figma webhook, it generates a random passcode and
+ * sends it in the POST body. n8n stores this passcode and verifies it on
+ * every incoming event. We capture it so `webhook fire` can use the same
+ * passcode instead of a static value.
+ *
+ * The passcode is saved to ~/.n8n-node-mocker/figma-passcode.txt
+ *
+ * @see https://developers.figma.com/docs/rest-api/webhooks-security/
+ */
+function figmaCapturePasscode(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { passcode?: string; data?: { passcode?: string } };
+		const passcode = body.passcode ?? body.data?.passcode;
+		if (!passcode || typeof passcode !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'figma-passcode.txt');
+		writeFileSync(filePath, passcode);
+
+		console.log(chalk.magenta(`FIGMA: captured passcode -> ${filePath}`));
+		console.log(chalk.magenta(`FIGMA: use --secret-file ${filePath} or it will be auto-detected`));
+	} catch {
+		// Body wasn't JSON
 	}
 }

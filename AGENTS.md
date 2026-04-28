@@ -23,6 +23,7 @@ src/
     mitm-proxy.ts           HTTPS MITM proxy core
     ca.ts                   CA + per-host TLS cert generation
     graphql-parser.ts       GraphQL operation name extraction
+    service-hooks.ts        Per-provider custom logic (handshakes, secret capture)
   fixtures/
     fixture-store.ts        Read fixture JSON files
   signers/
@@ -33,6 +34,10 @@ src/
     linear/                 Built-in webhook event payloads
       issue.created.json
     ...
+fixtures/                   Committed fixture files (per-hostname)
+  acuityscheduling.com/     Acuity appointment responses
+  app.asana.com/            Asana workspaces, webhooks
+  api.figma.com/            Figma webhooks
 ```
 
 ## How to Add a New Fake API / Service
@@ -152,17 +157,87 @@ pnpm build   # compiles TS + copies templates to dist/
 pnpm test    # verify all tests pass
 ```
 
+### Step 8: Check if the service needs a service hook
+
+Some services have custom flows beyond simple request/response mocking.
+Check if the service requires any of these patterns:
+
+- **Handshake / callback**: Service sends a confirmation request back to
+  n8n's webhook URL during registration (e.g. Asana's `X-Hook-Secret`)
+- **Dynamic secret capture**: n8n generates a secret at registration time
+  and the proxy needs to capture it for `webhook fire` to use later
+  (e.g. Figma's passcode)
+- **PING event**: Service sends a test event right after registration
+
+If yes, add a hook in `src/proxy/service-hooks.ts`. See the existing
+hooks for Asana and Figma as examples.
+
+### Step 9: Check if `webhook fire` needs special handling
+
+If the service's secret is dynamic (not from config), add auto-detection
+logic in `src/commands/webhook.ts`. See the Figma passcode auto-detect
+as an example -- it reads a captured value from a file instead of using
+the static config secret.
+
 ## Checklist for Adding a Service
 
-- [ ] Research: read the n8n trigger node + service webhook docs
+- [ ] Research: read the n8n trigger node + **official API webhook docs**
+- [ ] Verify signing logic against official docs, not just n8n code
 - [ ] Create `src/signers/<name>.ts` implementing `WebhookSigner` with `@see` URL to official API docs
 - [ ] Register in `src/signers/index.ts`
 - [ ] Add event templates in `src/templates/<name>/`
 - [ ] Add fixtures in `fixtures/<hostname>/` for common follow-up API calls
+- [ ] Check for pagination loops: APIs wrapping responses in `{data: [], next_page: null}` need fixtures, not smart fallback
+- [ ] Add service hook in `src/proxy/service-hooks.ts` if needed (handshake, dynamic secrets, PING)
+- [ ] Add auto-detection in `src/commands/webhook.ts` if secret is dynamic
 - [ ] Add default secret in `src/config.ts` and `config.example.yaml`
 - [ ] Write test in `src/signers/<name>.test.ts`
 - [ ] `pnpm build && pnpm test` passes
 - [ ] Update the service table in `README.md` if needed
+
+## Service Hooks (`src/proxy/service-hooks.ts`)
+
+Service hooks run after the proxy sends a mock response. They handle
+provider-specific flows that go beyond simple request/response mocking.
+
+### How hooks work
+
+```typescript
+interface ServiceHook {
+  match: (ctx: ServiceHookContext) => boolean;  // when to trigger
+  run: (ctx: ServiceHookContext) => void;       // what to do
+}
+```
+
+The proxy calls `runPostResponseHooks()` after every mock response.
+Each hook checks if its `match` function returns true, then runs.
+
+### Existing hooks
+
+| Service | Hook | What it does |
+|---------|------|-------------|
+| **Asana** | `asanaHandshake` | After `POST /webhooks`, sends `X-Hook-Secret` to n8n's webhook URL. n8n stores this secret for future HMAC verification. Uses the signing secret from config. |
+| **Figma** | `figmaCapturePasscode` | After `POST /webhooks`, reads the `passcode` from n8n's request body and saves it to `~/.n8n-node-mocker/figma-passcode.txt`. The `webhook fire` command auto-reads this file so it can inject the correct passcode into events. |
+
+### Adding a new hook
+
+1. Add an entry to the `hooks` array in `service-hooks.ts`
+2. Write a `match` function (check hostname, method, path)
+3. Write a `run` function with the custom logic
+4. Add a `@see` link to the official API docs explaining the flow
+5. If the hook captures dynamic secrets, update `webhook.ts` to auto-detect them
+
+### Common patterns that need hooks
+
+- **Handshake callbacks**: Service confirms webhook registration by
+  calling back to the webhook URL (Asana, potentially others)
+- **Dynamic secret capture**: n8n generates a secret during registration
+  that the proxy must capture for later use (Figma passcode)
+- **Subscription confirmation**: Service sends a confirmation URL that
+  must be fetched to activate the webhook (AWS SNS)
+- **Pagination-sensitive endpoints**: If an API wraps responses in a
+  custom envelope (e.g. `{data: [], next_page: null}`), a fixture is
+  needed instead of the smart fallback to prevent infinite loops
 
 ## Common Signer Patterns (reference)
 
