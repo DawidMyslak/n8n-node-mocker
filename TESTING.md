@@ -190,6 +190,45 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## Netlify
+
+**Credential type:** Netlify API
+
+| Field | Value |
+|-------|-------|
+| Access Token | `test` |
+
+**Node configuration:**
+1. Search for **Netlify** and pick **On deploy created** from the trigger list
+2. Select your credential
+3. **Site Name or ID** -- select **mock-site** from the dropdown
+   (the proxy serves a fixture for this)
+4. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service netlify \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event deploy_created
+```
+
+**What happens behind the scenes:**
+- n8n calls `GET /api/v1/sites` -- proxy serves a fixture with a mock site
+- n8n calls `GET /api/v1/hooks?site_id=...` -- proxy returns an empty list
+- n8n calls `POST /api/v1/hooks` -- proxy returns a mock webhook ID
+- `webhook fire` signs the payload as a JWT (HS256) with `iss: "netlify"`
+  and a `sha256` of the body, sent in the `X-Webhook-Signature` header
+
+**Gotchas:**
+- Netlify uses **JWT signatures** (not HMAC). The signing secret in
+  credentials is used as the JWT secret key.
+- The JWS token contains `{ iss: "netlify", sha256: "<hex digest of body>" }`.
+
+**Available events:** `deploy_created`, `deploy_building`, `deploy_failed`
+
+---
+
 ## Linear
 
 **Credential type:** Linear API

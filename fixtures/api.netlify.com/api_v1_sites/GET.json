@@ -1,0 +1,18 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": [
+			{
+				"id": "mock-site-abc123",
+				"site_id": "mock-site-abc123",
+				"name": "mock-site",
+				"url": "https://mock-site.netlify.app",
+				"ssl_url": "https://mock-site.netlify.app",
+				"admin_url": "https://app.netlify.com/sites/mock-site",
+				"created_at": "2026-01-01T00:00:00.000Z",
+				"updated_at": "2026-04-28T10:00:00.000Z"
+			}
+		]
+	}
+}
