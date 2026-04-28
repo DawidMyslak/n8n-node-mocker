@@ -17,22 +17,32 @@ pnpm build
 # Generate a CA certificate (one-time setup)
 npx n8n-node-mocker init
 
-# Start the proxy in mock mode
-npx n8n-node-mocker start --mode mock
+# Start the proxy (mock mode is the default)
+npx n8n-node-mocker start
 ```
 
 ## Using with n8n
 
-Start n8n with two environment variables to route all traffic through the proxy:
+Start n8n with the proxy environment variables. Use `pnpm start` (not `pnpm dev`)
+to avoid dev tooling (Turbo, Vite, Storybook) picking up `HTTPS_PROXY` and failing:
 
 ```bash
-# In the n8n repo directory
+# In the n8n repo directory -- build first (one-time after checkout)
+pnpm build
+
+# Start n8n through the proxy
 NODE_EXTRA_CA_CERTS=~/.n8n-node-mocker/ca.pem \
-HTTPS_PROXY=http://localhost:9090 \
-pnpm dev
+HTTPS_PROXY=http://127.0.0.1:9090 \
+NO_PROXY=telemetry.n8n.io,ph.n8n.io \
+pnpm start
 ```
 
-That's it. All outbound HTTPS requests from n8n nodes now flow through the proxy.
+**Important:**
+- Use `127.0.0.1` (not `localhost`) to avoid IPv6 resolution issues on macOS.
+- `NO_PROXY` excludes n8n's telemetry endpoints which flood the proxy with
+  dozens of concurrent requests. Only actual API calls need to go through it.
+
+All outbound HTTPS requests from n8n nodes now flow through the proxy.
 
 ## How It Works
 
@@ -80,19 +90,36 @@ fixtures/
       webhookCreate.json
 ```
 
-### Mock Mode
+### Mock Mode (default)
 
-Serves saved fixtures instead of hitting real APIs. Returns 501 for unrecorded requests.
+Serves saved fixtures instead of hitting real APIs. This is the default mode.
 
 ```bash
-npx n8n-node-mocker start --mode mock
+npx n8n-node-mocker start
 ```
+
+By default, requests without a matching fixture get a smart fallback response
+(HTTP 200 with a sensible JSON body) so that n8n stays responsive even when
+you haven't recorded every endpoint. The proxy uses heuristics based on the
+HTTP method:
+
+| Method | Fallback Response |
+|--------|------------------|
+| GET (list endpoint) | `[]` |
+| GET (single resource) | `{ "id": "...", "name": "Mock Resource" }` |
+| POST | `{ "id": "mock-<uuid>", "success": true }` |
+| PUT / PATCH | `{ "success": true, "updated": true }` |
+| DELETE | `{ "success": true, "deleted": true }` |
+| GraphQL | `{ "data": {} }` |
 
 Output:
 ```
-MOCKED: POST api.linear.app/graphql [IssueCreate] -> 200
-NO FIXTURE: POST api.linear.app/graphql [CommentCreate]
+MOCKED:   POST api.linear.app/graphql [IssueCreate] -> 200
+FALLBACK: GET  api.acuity.com/api/v1/webhooks -> 200 (auto)
 ```
+
+To get strict 501 errors for missing fixtures (useful for ensuring full
+coverage), set `fallbackMode: error` in `config.yaml`.
 
 ## Webhook Simulation
 
@@ -153,15 +180,22 @@ port: 9090
 fixturesDir: ./fixtures
 caDir: ~/.n8n-node-mocker
 
+# What to do when no fixture matches in mock mode:
+#   auto  - return smart 200 defaults (recommended for exploratory testing)
+#   error - return 501 (use for strict fixture coverage)
+fallbackMode: auto
+
 services:
   linear:
-    signingSecret: "your-secret-here"
+    signingSecret: "test"
   typeform:
-    signingSecret: "your-secret-here"
-  # ... more services
+    signingSecret: "test"
+  # ... all services default to "test"
 ```
 
-**Important:** The `signingSecret` for each service must match the signing secret configured in the corresponding n8n credential. For example, the Linear API credential in n8n has a "Signing Secret" field -- use the same value here.
+**All services use `test` as the default signing secret.** When creating credentials
+in n8n, just type `test` in any signing secret / API key field. One value to
+remember, works everywhere.
 
 ## Supported Services
 
@@ -230,16 +264,17 @@ export const myServiceSigner: WebhookSigner = {
 
 ```bash
 # Terminal 1: Start the proxy
-npx n8n-node-mocker start --mode mock --port 9090
+npx n8n-node-mocker start
 
 # Terminal 2: Start n8n with proxy
 cd /path/to/n8n
 NODE_EXTRA_CA_CERTS=~/.n8n-node-mocker/ca.pem \
-HTTPS_PROXY=http://localhost:9090 \
-pnpm dev
+HTTPS_PROXY=http://127.0.0.1:9090 \
+NO_PROXY=telemetry.n8n.io,ph.n8n.io \
+pnpm start
 
 # In n8n UI:
-# 1. Create a Linear API credential with signing secret "test-secret-linear"
+# 1. Create a credential -- use "test" as the signing/API secret
 # 2. Create a workflow with LinearTrigger node
 # 3. Activate the workflow (proxy will mock the webhook registration)
 

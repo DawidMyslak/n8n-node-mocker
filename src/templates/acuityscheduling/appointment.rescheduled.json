@@ -1,0 +1,6 @@
+{
+  "id": 101234567,
+  "action": "rescheduled",
+  "calendarID": 3456789,
+  "appointmentTypeID": 12345
+}

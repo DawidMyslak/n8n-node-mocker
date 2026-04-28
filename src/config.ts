@@ -7,10 +7,13 @@ export interface ServiceConfig {
 	signingSecret: string;
 }
 
+export type FallbackMode = 'auto' | 'error';
+
 export interface Config {
 	port: number;
 	fixturesDir: string;
 	caDir: string;
+	fallbackMode: FallbackMode;
 	services: Record<string, ServiceConfig>;
 }
 
@@ -18,27 +21,28 @@ const DEFAULT_CONFIG: Config = {
 	port: 9090,
 	fixturesDir: './fixtures',
 	caDir: '~/.n8n-node-mocker',
+	fallbackMode: 'auto',
 	services: {
-		linear: { signingSecret: 'test-secret-linear' },
-		typeform: { signingSecret: 'test-secret-typeform' },
-		figma: { signingSecret: 'test-secret-figma' },
-		gitlab: { signingSecret: 'test-secret-gitlab' },
-		trello: { signingSecret: 'test-secret-trello' },
-		twilio: { signingSecret: 'test-secret-twilio' },
-		asana: { signingSecret: 'test-secret-asana' },
-		netlify: { signingSecret: 'test-secret-netlify' },
-		acuityscheduling: { signingSecret: 'test-secret-acuity' },
-		awssns: { signingSecret: 'test-secret-awssns' },
-		box: { signingSecret: 'test-secret-box' },
-		cal: { signingSecret: 'test-secret-cal' },
-		calendly: { signingSecret: 'test-secret-calendly' },
-		customerio: { signingSecret: 'test-secret-customerio' },
-		formstack: { signingSecret: 'test-secret-formstack' },
-		mailerlite: { signingSecret: 'test-secret-mailerlite' },
-		mautic: { signingSecret: 'test-secret-mautic' },
-		microsoftteams: { signingSecret: 'test-secret-msteams' },
-		onfleet: { signingSecret: 'test-secret-onfleet' },
-		taiga: { signingSecret: 'test-secret-taiga' },
+		linear: { signingSecret: 'test' },
+		typeform: { signingSecret: 'test' },
+		figma: { signingSecret: 'test' },
+		gitlab: { signingSecret: 'test' },
+		trello: { signingSecret: 'test' },
+		twilio: { signingSecret: 'test' },
+		asana: { signingSecret: 'test' },
+		netlify: { signingSecret: 'test' },
+		acuityscheduling: { signingSecret: 'test' },
+		awssns: { signingSecret: 'test' },
+		box: { signingSecret: 'test' },
+		cal: { signingSecret: 'test' },
+		calendly: { signingSecret: 'test' },
+		customerio: { signingSecret: 'test' },
+		formstack: { signingSecret: 'test' },
+		mailerlite: { signingSecret: 'test' },
+		mautic: { signingSecret: 'test' },
+		microsoftteams: { signingSecret: 'test' },
+		onfleet: { signingSecret: 'test' },
+		taiga: { signingSecret: 'test' },
 	},
 };
 
@@ -54,11 +58,11 @@ export function loadConfig(configPath?: string): Config {
 
 	if (existsSync(filePath)) {
 		const raw = readFileSync(filePath, 'utf-8');
-		const parsed = yaml.load(raw) as Partial<Config>;
+		const parsed = (yaml.load(raw) as Partial<Config>) ?? {};
 		return {
 			...DEFAULT_CONFIG,
 			...parsed,
-			services: { ...DEFAULT_CONFIG.services, ...parsed.services },
+			services: { ...DEFAULT_CONFIG.services, ...parsed?.services },
 		};
 	}
 

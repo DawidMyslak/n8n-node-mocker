@@ -5,47 +5,54 @@ port: 9090
 fixturesDir: ./fixtures
 caDir: ~/.n8n-node-mocker
 
+# What to do when no fixture matches a request in mock mode:
+#   auto  - return smart defaults (200 OK with empty JSON) so n8n keeps working
+#   error - return 501 (original behavior, useful for strict testing)
+fallbackMode: auto
+
 # Per-service signing secrets.
 # These must match the secrets configured in n8n credentials
 # for signature verification to pass.
+# Default: "test" for all services -- just type "test" in n8n's
+# signing secret field and it works.
 services:
   linear:
-    signingSecret: "test-secret-linear"
+    signingSecret: "test"
   typeform:
-    signingSecret: "test-secret-typeform"
+    signingSecret: "test"
   figma:
-    signingSecret: "test-secret-figma"
+    signingSecret: "test"
   gitlab:
-    signingSecret: "test-secret-gitlab"
+    signingSecret: "test"
   trello:
-    signingSecret: "test-secret-trello"
+    signingSecret: "test"
   twilio:
-    signingSecret: "test-secret-twilio"
+    signingSecret: "test"
   asana:
-    signingSecret: "test-secret-asana"
+    signingSecret: "test"
   netlify:
-    signingSecret: "test-secret-netlify"
+    signingSecret: "test"
   acuityscheduling:
-    signingSecret: "test-secret-acuity"
+    signingSecret: "test"
   awssns:
-    signingSecret: "test-secret-awssns"
+    signingSecret: "test"
   box:
-    signingSecret: "test-secret-box"
+    signingSecret: "test"
   cal:
-    signingSecret: "test-secret-cal"
+    signingSecret: "test"
   calendly:
-    signingSecret: "test-secret-calendly"
+    signingSecret: "test"
   customerio:
-    signingSecret: "test-secret-customerio"
+    signingSecret: "test"
   formstack:
-    signingSecret: "test-secret-formstack"
+    signingSecret: "test"
   mailerlite:
-    signingSecret: "test-secret-mailerlite"
+    signingSecret: "test"
   mautic:
-    signingSecret: "test-secret-mautic"
+    signingSecret: "test"
   microsoftteams:
-    signingSecret: "test-secret-msteams"
+    signingSecret: "test"
   onfleet:
-    signingSecret: "test-secret-onfleet"
+    signingSecret: "test"
   taiga:
-    signingSecret: "test-secret-taiga"
+    signingSecret: "test"
