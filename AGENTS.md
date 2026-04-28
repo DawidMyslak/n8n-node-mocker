@@ -158,6 +158,7 @@ pnpm test    # verify all tests pass
 - [ ] Create `src/signers/<name>.ts` implementing `WebhookSigner` with `@see` URL to official API docs
 - [ ] Register in `src/signers/index.ts`
 - [ ] Add event templates in `src/templates/<name>/`
+- [ ] Add fixtures in `fixtures/<hostname>/` for common follow-up API calls
 - [ ] Add default secret in `src/config.ts` and `config.example.yaml`
 - [ ] Write test in `src/signers/<name>.test.ts`
 - [ ] `pnpm build && pnpm test` passes
@@ -208,23 +209,51 @@ interface SignResult {
 }
 ```
 
-## Fixture Format
+## Fixtures
 
-Each fixture file is a JSON object with a `response` field:
+Fixtures live in `fixtures/` and are **committed to the repo** so everyone
+gets them. When adding a new service, always add fixtures for common
+follow-up API calls that trigger nodes make after receiving a webhook.
+
+### Fixture matching
+
+URL path `/` is replaced with `_`. The proxy tries an exact match first,
+then walks up the path tree:
+
+```
+GET /api/v1/appointments/12345 →
+  1. fixtures/acuityscheduling.com/api_v1_appointments_12345/GET.json  (exact)
+  2. fixtures/acuityscheduling.com/api_v1_appointments/GET.json        (any ID ✓)
+  3. fixtures/acuityscheduling.com/_fallback.json                      (host catch-all)
+```
+
+Place fixtures at the resource-type level (without the ID) so a single file
+handles all IDs.
+
+### File format
 
 ```json
 {
   "response": {
     "statusCode": 200,
     "headers": { "content-type": "application/json" },
-    "body": { "data": { "issueCreate": { "success": true } } }
+    "body": { "id": 101234567, "firstName": "Jane", "email": "jane@example.com" }
   }
 }
 ```
 
-Fixtures are matched by host + path + GraphQL operation name (for POST
-requests). REST requests fall back to method-based matching. A `_fallback.json`
-in any directory serves as a catch-all.
+GraphQL fixtures are matched by operation name (e.g. `IssueCreate.json`).
+REST fixtures are matched by HTTP method (e.g. `GET.json`, `POST.json`).
+A `_fallback.json` in any directory serves as a catch-all.
+
+### Checklist for adding fixtures
+
+- [ ] Check proxy logs for `FALLBACK` lines to find which URLs need fixtures
+- [ ] Convert the URL path: replace `/` with `_`, drop dynamic ID segments
+- [ ] Create the directory under `fixtures/<hostname>/`
+- [ ] Reference the real API docs for a realistic response shape
+- [ ] Use fake but realistic data (names, emails, dates) -- never real user data
+- [ ] Commit the fixture to the repo so others get it too
 
 ## Style Guidelines
 
