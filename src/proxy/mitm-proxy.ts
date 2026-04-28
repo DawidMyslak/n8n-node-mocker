@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { createServer as createHttpServer, request as httpRequest } from 'node:http';
 import { connect as netConnect } from 'node:net';
-import { createServer as createTlsServer, connect as tlsConnect } from 'node:tls';
+import { createServer as createTlsServer } from 'node:tls';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Socket } from 'node:net';
 
@@ -9,14 +9,9 @@ import chalk from 'chalk';
 
 import type { Config } from '../config.js';
 import { expandHome } from '../config.js';
-import type { Fixture } from '../fixtures/fixture-store.js';
 import { FixtureStore } from '../fixtures/fixture-store.js';
-import { sanitizeHeaders } from '../fixtures/sanitizer.js';
 import { type CAKeyPair, generateServerCert, loadCA } from './ca.js';
 import { extractGraphQLOperation } from './graphql-parser.js';
-import { buildRequestKey, requestKeyToFixturePath } from './request-matcher.js';
-
-export type ProxyMode = 'record' | 'mock';
 
 interface TlsServerEntry {
 	port: number;
@@ -28,10 +23,7 @@ export class MitmProxy {
 	private readonly tlsServers = new Map<string, TlsServerEntry>();
 	private readonly pendingTlsServers = new Map<string, Promise<TlsServerEntry>>();
 
-	constructor(
-		private readonly mode: ProxyMode,
-		private readonly config: Config,
-	) {
+	constructor(private readonly config: Config) {
 		this.store = new FixtureStore(expandHome(config.fixturesDir));
 		this.ca = loadCA(expandHome(config.caDir));
 	}
@@ -53,7 +45,7 @@ export class MitmProxy {
 
 		server.listen(this.config.port, '::', () => {
 			console.log(
-				chalk.green(`n8n-node-mocker proxy started on port ${this.config.port} [${this.mode} mode]`),
+				chalk.green(`n8n-node-mocker proxy started on port ${this.config.port}`),
 			);
 			console.log(chalk.dim(`Fixtures directory: ${expandHome(this.config.fixturesDir)}`));
 			console.log();
@@ -109,9 +101,7 @@ export class MitmProxy {
 		return promise;
 	}
 
-	private createTlsServer(
-		hostname: string,
-	): Promise<TlsServerEntry> {
+	private createTlsServer(hostname: string): Promise<TlsServerEntry> {
 		const { cert, key } = generateServerCert(hostname, this.ca.certPem, this.ca.keyPem);
 
 		return new Promise((resolve) => {
@@ -162,16 +152,12 @@ export class MitmProxy {
 							if (received >= contentLength) {
 								socket.removeListener('data', bodyCollector);
 								const fullBody = Buffer.concat(chunks).subarray(0, contentLength);
-								this.processInterceptedRequest(
-									hostname, method!, path!, headers, fullBody, socket,
-								);
+								this.serveMock(hostname, method!, path!, headers, fullBody, socket);
 							}
 						};
 						socket.on('data', bodyCollector);
 					} else {
-						this.processInterceptedRequest(
-							hostname, method!, path!, headers, bodyBuf.subarray(0, contentLength), socket,
-						);
+						this.serveMock(hostname, method!, path!, headers, bodyBuf.subarray(0, contentLength), socket);
 					}
 				};
 
@@ -200,42 +186,15 @@ export class MitmProxy {
 		});
 	}
 
-	private processInterceptedRequest(
-		hostname: string,
-		method: string,
-		path: string,
-		headers: Record<string, string>,
-		body: Buffer,
-		clientSocket: import('node:tls').TLSSocket,
-	): void {
-		const bodyStr = body.length > 0 ? body.toString('utf-8') : undefined;
-
-		if (this.mode === 'mock') {
-			this.serveMock(hostname, method, path, headers, bodyStr, clientSocket);
-		} else {
-			const targetPort = this.resolveTargetPort(hostname, headers);
-			this.recordRequest(hostname, targetPort, method, path, headers, body, bodyStr, clientSocket);
-		}
-	}
-
-	private resolveTargetPort(hostname: string, headers: Record<string, string>): number {
-		const host = headers.host ?? hostname;
-		const colonIdx = host.lastIndexOf(':');
-		if (colonIdx > 0) {
-			const port = parseInt(host.substring(colonIdx + 1), 10);
-			if (!isNaN(port)) return port;
-		}
-		return 443;
-	}
-
 	private serveMock(
 		hostname: string,
 		method: string,
 		path: string,
 		_headers: Record<string, string>,
-		bodyStr: string | undefined,
+		body: Buffer,
 		clientSocket: import('node:tls').TLSSocket,
 	): void {
+		const bodyStr = body.length > 0 ? body.toString('utf-8') : undefined;
 		const operationName = bodyStr ? extractGraphQLOperation(bodyStr) : null;
 		const fixture = this.store.findFixture(hostname, path, method, operationName);
 
@@ -253,7 +212,7 @@ export class MitmProxy {
 		} else {
 			console.log(chalk.red(`NO FIXTURE: ${label}`));
 			this.sendResponse(clientSocket, 501, { 'content-type': 'application/json' }, {
-				error: `No fixture for ${label}. Run in record mode first or create a fixture manually.`,
+				error: `No fixture for ${label}. Create a fixture file manually.`,
 			});
 		}
 	}
@@ -272,7 +231,6 @@ export class MitmProxy {
 		const upper = method.toUpperCase();
 
 		if (upper === 'GET') {
-			// Heuristic: plural path segments usually return lists
 			const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
 			const looksLikeSingular = /^[a-f0-9-]{20,}$/.test(lastSegment) || /^\d+$/.test(lastSegment);
 			if (looksLikeSingular) {
@@ -300,114 +258,7 @@ export class MitmProxy {
 		return { ok: true };
 	}
 
-	private recordRequest(
-		hostname: string,
-		targetPort: number,
-		method: string,
-		path: string,
-		headers: Record<string, string>,
-		body: Buffer,
-		bodyStr: string | undefined,
-		clientSocket: import('node:tls').TLSSocket,
-	): void {
-		const targetSocket = tlsConnect(
-			{ host: hostname, port: targetPort, servername: hostname },
-			() => {
-				const reqHeaders = { ...headers, host: hostname };
-				let reqLine = `${method} ${path} HTTP/1.1\r\n`;
-				for (const [k, v] of Object.entries(reqHeaders)) {
-					reqLine += `${k}: ${v}\r\n`;
-				}
-				reqLine += '\r\n';
-				targetSocket.write(reqLine);
-				if (body.length > 0) targetSocket.write(body);
-			},
-		);
-
-		let responseData = Buffer.alloc(0);
-		targetSocket.on('data', (chunk: Buffer) => {
-			responseData = Buffer.concat([responseData, chunk]);
-		});
-
-		targetSocket.on('end', () => {
-			const headerEnd = responseData.indexOf('\r\n\r\n');
-			if (headerEnd === -1) {
-				clientSocket.end();
-				return;
-			}
-
-			const respHeaderStr = responseData.subarray(0, headerEnd).toString();
-			const respBody = responseData.subarray(headerEnd + 4);
-			const respLines = respHeaderStr.split('\r\n');
-			const statusMatch = respLines[0].match(/HTTP\/\d\.\d (\d+)/);
-			const statusCode = statusMatch ? parseInt(statusMatch[1], 10) : 500;
-			const respHeaders: Record<string, string> = {};
-
-			for (let i = 1; i < respLines.length; i++) {
-				const colonIdx = respLines[i].indexOf(':');
-				if (colonIdx > 0) {
-					respHeaders[respLines[i].substring(0, colonIdx).trim().toLowerCase()] =
-						respLines[i].substring(colonIdx + 1).trim();
-				}
-			}
-
-			let respBodyParsed: unknown;
-			try {
-				respBodyParsed = JSON.parse(respBody.toString('utf-8'));
-			} catch {
-				respBodyParsed = respBody.toString('utf-8');
-			}
-
-			let reqBodyParsed: unknown;
-			if (bodyStr) {
-				try { reqBodyParsed = JSON.parse(bodyStr); } catch { reqBodyParsed = bodyStr; }
-			}
-
-			const operationName = bodyStr ? extractGraphQLOperation(bodyStr) : null;
-			const key = buildRequestKey(hostname, method, path, bodyStr);
-			const fixturePath = requestKeyToFixturePath(key);
-
-			const fixture: Fixture = {
-				request: {
-					method,
-					host: hostname,
-					path,
-					headers: sanitizeHeaders(headers),
-					body: reqBodyParsed,
-				},
-				response: {
-					statusCode,
-					headers: respHeaders,
-					body: respBodyParsed,
-				},
-				operationName: operationName ?? undefined,
-				recordedAt: new Date().toISOString(),
-			};
-
-			const savedPath = this.store.save(fixturePath, fixture);
-			const label = operationName
-				? `${method} ${hostname}${path} [${operationName}]`
-				: `${method} ${hostname}${path}`;
-			console.log(chalk.green(`RECORDED: ${label} -> ${statusCode}`));
-			console.log(chalk.dim(`  -> ${savedPath}`));
-
-			// Forward the raw response back to the client
-			if (!clientSocket.destroyed && clientSocket.writable) {
-				clientSocket.write(responseData);
-				clientSocket.end();
-			}
-		});
-
-		targetSocket.on('error', (err) => {
-			console.log(chalk.red(`UPSTREAM ERROR: ${hostname}${path} - ${err.message}`));
-			this.sendResponse(clientSocket, 502, { 'content-type': 'application/json' }, {
-				error: `Failed to connect to upstream: ${err.message}`,
-			});
-		});
-	}
-
 	private handleHttpRequest(req: IncomingMessage, res: ServerResponse): void {
-		// Plain HTTP proxy (non-CONNECT), rarely used for APIs but handle it
 		const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
 		const label = `${req.method} ${url.hostname}${url.pathname}`;
 		console.log(chalk.dim(`HTTP (non-TLS): ${label} - passing through`));

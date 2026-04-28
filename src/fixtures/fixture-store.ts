@@ -1,21 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 export interface Fixture {
-	request: {
-		method: string;
-		host: string;
-		path: string;
-		headers: Record<string, string>;
-		body?: unknown;
-	};
 	response: {
 		statusCode: number;
 		headers: Record<string, string>;
 		body: unknown;
 	};
-	operationName?: string;
-	recordedAt: string;
 }
 
 export class FixtureStore {
@@ -23,18 +14,6 @@ export class FixtureStore {
 		if (!existsSync(baseDir)) {
 			mkdirSync(baseDir, { recursive: true });
 		}
-	}
-
-	save(relativePath: string, fixture: Fixture): string {
-		const fullPath = resolve(this.baseDir, relativePath);
-		const dir = dirname(fullPath);
-
-		if (!existsSync(dir)) {
-			mkdirSync(dir, { recursive: true });
-		}
-
-		writeFileSync(fullPath, JSON.stringify(fixture, null, 2));
-		return fullPath;
 	}
 
 	load(relativePath: string): Fixture | null {

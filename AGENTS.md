@@ -6,8 +6,8 @@ Guidance for AI agents working on the n8n-node-mocker project.
 
 n8n-node-mocker is an HTTPS MITM proxy + webhook simulator for testing n8n
 nodes without real API credentials. It intercepts outbound traffic from n8n
-via `HTTPS_PROXY`, records/replays API responses as fixtures, and fires
-correctly-signed webhook events to n8n's webhook endpoints.
+via `HTTPS_PROXY`, returns smart mock responses (or serves custom fixtures),
+and fires correctly-signed webhook events to n8n's webhook endpoints.
 
 ## Architecture
 
@@ -17,19 +17,17 @@ src/
   config.ts                 YAML config loader + defaults
   commands/
     init.ts                 CA certificate generation
-    start.ts                Proxy startup (record/mock)
+    start.ts                Proxy startup
     webhook.ts              webhook fire / list-services / list-events
   proxy/
     mitm-proxy.ts           HTTPS MITM proxy core
     ca.ts                   CA + per-host TLS cert generation
-    request-matcher.ts      Request → fixture path mapping
     graphql-parser.ts       GraphQL operation name extraction
   fixtures/
-    fixture-store.ts        Read/write fixture JSON files
-    sanitizer.ts            Redact sensitive headers
+    fixture-store.ts        Read fixture JSON files
   signers/
     index.ts                Signer registry, interface, getSigner()
-    linear.ts               One file per service (20 total)
+    linear.ts               One file per service
     ...
   templates/
     linear/                 Built-in webhook event payloads
@@ -127,16 +125,15 @@ In `src/signers/index.ts`:
 Create `src/templates/<service-name>/` with JSON files for common events.
 Name them after the event type (e.g. `issue.created.json`, `form_response.json`).
 
-Build realistic payloads by referencing the service's webhook documentation
-or by recording real events in record mode. Use test/fake data -- never
-include real user data or credentials.
+Build realistic payloads by referencing the service's webhook documentation.
+Use test/fake data -- never include real user data or credentials.
 
 ### Step 5: Add default config
 
 In `src/config.ts`, add a default entry in `DEFAULT_CONFIG.services`:
 
 ```typescript
-myservice: { signingSecret: 'test-secret-myservice' },
+myservice: { signingSecret: 'test' },
 ```
 
 Also add the entry to `config.example.yaml`.
@@ -147,9 +144,6 @@ Create `src/signers/<service-name>.test.ts`. At minimum, verify that:
 1. The signer produces the expected HMAC digest
 2. The correct header name is set
 3. Any prefix/encoding matches the service's spec
-
-For critical services, write an e2e test (see `src/e2e-linear.test.ts`)
-that reproduces n8n's exact verification logic.
 
 ### Step 7: Rebuild
 
@@ -216,24 +210,15 @@ interface SignResult {
 
 ## Fixture Format
 
-Each fixture file is a JSON object:
+Each fixture file is a JSON object with a `response` field:
 
 ```json
 {
-  "request": {
-    "method": "POST",
-    "host": "api.linear.app",
-    "path": "/graphql",
-    "headers": { "authorization": "[REDACTED]" },
-    "body": { "query": "mutation IssueCreate ..." }
-  },
   "response": {
     "statusCode": 200,
     "headers": { "content-type": "application/json" },
     "body": { "data": { "issueCreate": { "success": true } } }
-  },
-  "operationName": "IssueCreate",
-  "recordedAt": "2026-04-27T21:00:00.000Z"
+  }
 }
 ```
 

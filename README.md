@@ -2,7 +2,7 @@
 
 MITM proxy + webhook simulator for testing n8n nodes without real API credentials.
 
-Intercepts all HTTPS traffic from n8n, records real API responses as fixtures, replays them in mock mode, and fires correctly-signed webhook events -- enabling full end-to-end node testing without touching the real APIs.
+Intercepts all HTTPS traffic from n8n, returns smart mock responses for any API call, and fires correctly-signed webhook events -- enabling full end-to-end node testing without touching the real APIs.
 
 **Zero changes to n8n required.** Works entirely through standard environment variables (`HTTPS_PROXY`, `NODE_EXTRA_CA_CERTS`).
 
@@ -17,7 +17,7 @@ pnpm build
 # Generate a CA certificate (one-time setup)
 npx n8n-node-mocker init
 
-# Start the proxy (mock mode is the default)
+# Start the proxy
 npx n8n-node-mocker start
 ```
 
@@ -48,60 +48,25 @@ All outbound HTTPS requests from n8n nodes now flow through the proxy.
 
 ```
                           HTTPS_PROXY
-┌─────────┐            ┌──────────────┐           ┌──────────────┐
-│  n8n    │───────────▸│ n8n-node-    │──record──▸│  Real API    │
-│ (5678)  │            │ mocker (9090)│           │ (linear.app) │
-└─────────┘            └──────────────┘           └──────────────┘
-     ▲                       │
-     │                  mock mode:
-     │                  serves fixtures
+┌─────────┐            ┌──────────────┐
+│  n8n    │───────────▸│ n8n-node-    │──▸ smart mock responses
+│ (5678)  │            │ mocker (9090)│    (or fixture files)
+└─────────┘            └──────────────┘
+     ▲
      │
 ┌─────────┐
-│ webhook │  n8n-node-mocker webhook fire
+│ webhook │  npx n8n-node-mocker webhook fire
 │ fire    │──────────────────┘
 └─────────┘
 ```
 
 The proxy performs HTTPS interception (MITM) using a locally-generated CA certificate. n8n trusts this CA via `NODE_EXTRA_CA_CERTS`.
 
-## Modes
+## Mock Responses
 
-### Record Mode
-
-Forwards requests to the real API, saves request/response pairs as JSON fixture files.
-
-```bash
-npx n8n-node-mocker start --mode record
-```
-
-Output:
-```
-RECORDED: POST api.linear.app/graphql [IssueCreate] -> 200
-  -> /path/to/fixtures/api.linear.app/graphql/IssueCreate.json
-```
-
-Fixtures are stored organized by hostname, path, and GraphQL operation name:
-```
-fixtures/
-  api.linear.app/
-    graphql/
-      IssueCreate.json
-      IssueGet.json
-      webhookCreate.json
-```
-
-### Mock Mode (default)
-
-Serves saved fixtures instead of hitting real APIs. This is the default mode.
-
-```bash
-npx n8n-node-mocker start
-```
-
-By default, requests without a matching fixture get a smart fallback response
-(HTTP 200 with a sensible JSON body) so that n8n stays responsive even when
-you haven't recorded every endpoint. The proxy uses heuristics based on the
-HTTP method:
+Every intercepted HTTPS request gets a smart fallback response (HTTP 200 with a
+sensible JSON body) so that n8n stays fully responsive. The proxy uses heuristics
+based on the HTTP method:
 
 | Method | Fallback Response |
 |--------|------------------|
@@ -114,11 +79,42 @@ HTTP method:
 
 Output:
 ```
-MOCKED:   POST api.linear.app/graphql [IssueCreate] -> 200
 FALLBACK: GET  api.acuity.com/api/v1/webhooks -> 200 (auto)
+FALLBACK: POST api.linear.app/graphql [IssueCreate] -> 200 (auto)
 ```
 
-To get strict 501 errors for missing fixtures (useful for ensuring full
+### Custom Fixtures
+
+If you need a specific endpoint to return a particular response, you can drop a
+JSON fixture file in the `fixtures/` directory. The proxy checks for fixtures
+first and uses the smart fallback only when none is found.
+
+Fixture file structure:
+
+```
+fixtures/
+  api.linear.app/
+    graphql/
+      IssueCreate.json    # Matched by GraphQL operation name
+  api.example.com/
+    api_v1_users/
+      GET.json            # Matched by HTTP method
+      _fallback.json      # Catch-all for this path
+```
+
+Each fixture is a JSON file with a `response` object:
+
+```json
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": { "id": "123", "name": "My Resource" }
+  }
+}
+```
+
+To get strict 501 errors when no fixture exists (useful for ensuring full
 coverage), set `fallbackMode: error` in `config.yaml`.
 
 ## Webhook Simulation
@@ -180,9 +176,9 @@ port: 9090
 fixturesDir: ./fixtures
 caDir: ~/.n8n-node-mocker
 
-# What to do when no fixture matches in mock mode:
-#   auto  - return smart 200 defaults (recommended for exploratory testing)
-#   error - return 501 (use for strict fixture coverage)
+# What to do when no fixture matches:
+#   auto  - return smart 200 defaults (recommended)
+#   error - return 501 (strict mode)
 fallbackMode: auto
 
 services:
@@ -310,14 +306,12 @@ src/
   proxy/
     mitm-proxy.ts               # HTTPS MITM proxy core
     ca.ts                       # CA + server certificate generation
-    request-matcher.ts          # Request-to-fixture matching
     graphql-parser.ts           # GraphQL operation name extraction
   fixtures/
     fixture-store.ts            # Fixture file I/O
-    sanitizer.ts                # Sensitive header redaction
   signers/
     index.ts                    # Signer registry + interface
-    linear.ts, typeform.ts ...  # Per-service signers (20 total)
+    linear.ts, typeform.ts ...  # Per-service signers
   templates/
     linear/                     # Built-in event payloads
     typeform/
