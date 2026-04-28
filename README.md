@@ -236,28 +236,28 @@ remember, works everywhere.
 All n8n webhook trigger nodes that support signature verification.
 Each signer has been verified against the official API documentation.
 
-| Service | Algorithm | Signature Header | Verified Against | Notes |
-|---------|-----------|-----------------|-----------------|-------|
-| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) | hex, + `webhookTimestamp` in body |
-| Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) | `sha256=` + base64 |
-| Figma | Passcode | (in body) | [API docs](https://developers.figma.com/docs/rest-api/webhooks-security/) | Passcode field echoed in event body |
-| GitLab | Token | `x-gitlab-token` | [API docs](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) | Simple token match, not HMAC |
-| Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | base64, signs body + callbackURL |
-| Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | base64, signs URL + sorted params |
-| Asana | HMAC-SHA256 | `x-hook-signature` | [API docs](https://developers.asana.com/docs/webhooks-guide#security) | hex, X-Hook-Secret handshake |
-| Netlify | JWT (HS256) | `x-webhook-signature` | [API docs](https://docs.netlify.com/site-deploys/notifications/#payload-signature) | JWS token with sha256 of body |
-| Acuity Scheduling | HMAC-SHA256 | `x-acuity-signature` | [API docs](https://developers.acuityscheduling.com/docs/webhooks) | base64 |
-| AWS SNS | RSA-SHA256 | `x-amz-sns-message-type` | [API docs](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) | Certificate-based (placeholder) |
-| Box | HMAC-SHA256 | `box-signature-primary` | [API docs](https://box.dev/guides/webhooks/v2/signatures-v2) | base64, body + timestamp bytes |
-| Cal.com | HMAC-SHA256 | `x-cal-signature-256` | [API docs](https://cal.com/docs/core-features/webhooks) | hex |
-| Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | `t=timestamp,v1=signature` |
-| Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | hex, signs `v0:timestamp:body` |
-| Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | `sha256=` prefix + hex |
-| MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | hex (new API), base64 (classic) |
-| Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | base64 |
-| Microsoft Teams | clientState | (in body) | [API docs](https://learn.microsoft.com/en-us/graph/change-notifications-delivery-webhooks) | Graph change notification clientState |
-| Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | hex, secret is hex-encoded key |
-| Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | hex |
+| Service | Algorithm | Signature Header | Verified Against | Tested | Notes |
+|---------|-----------|-----------------|-----------------|--------|-------|
+| Acuity Scheduling | HMAC-SHA256 | `x-acuity-signature` | [API docs](https://developers.acuityscheduling.com/docs/webhooks) | Yes | base64 |
+| Asana | HMAC-SHA256 | `x-hook-signature` | [API docs](https://developers.asana.com/docs/webhooks-guide#security) | Yes | hex, X-Hook-Secret handshake |
+| Figma | Passcode | (in body) | [API docs](https://developers.figma.com/docs/rest-api/webhooks-security/) | Yes | Passcode field echoed in event body |
+| GitLab | Token | `x-gitlab-token` | [API docs](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) | Yes | Simple token match, not HMAC |
+| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) | Yes | hex, + `webhookTimestamp` in body |
+| Netlify | JWT (HS256) | `x-webhook-signature` | [API docs](https://docs.netlify.com/site-deploys/notifications/#payload-signature) | Yes | JWS token with sha256 of body |
+| Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) | Yes | `sha256=` + base64 |
+| AWS SNS | RSA-SHA256 | `x-amz-sns-message-type` | [API docs](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) | | Certificate-based (placeholder) |
+| Box | HMAC-SHA256 | `box-signature-primary` | [API docs](https://box.dev/guides/webhooks/v2/signatures-v2) | | base64, body + timestamp bytes |
+| Cal.com | HMAC-SHA256 | `x-cal-signature-256` | [API docs](https://cal.com/docs/core-features/webhooks) | | hex |
+| Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | | `t=timestamp,v1=signature` |
+| Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | | hex, signs `v0:timestamp:body` |
+| Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | | `sha256=` prefix + hex |
+| MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | | hex (new API), base64 (classic) |
+| Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | | base64 |
+| Microsoft Teams | clientState | (in body) | [API docs](https://learn.microsoft.com/en-us/graph/change-notifications-delivery-webhooks) | | Graph change notification clientState |
+| Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | | hex, secret is hex-encoded key |
+| Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | | hex |
+| Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | | base64, signs body + callbackURL |
+| Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | | base64, signs URL + sorted params |
 
 ## Testing Each Service
 
