@@ -42,11 +42,12 @@ as the value unless noted otherwise.
 | User ID | `test` |
 | API Key | `test` |
 
-**Node configuration:**
+**Node configuration** (we'll set up an **appointment.scheduled** trigger):
 1. Add an **Acuity Scheduling Trigger** node
 2. Select your credential
-3. Pick an event (e.g. `appointment.scheduled`)
-4. Click **Listen for test event**
+3. **Event** -- select `appointment.scheduled`
+4. Leave **Resolve Data** enabled (the proxy has a fixture for appointment details)
+5. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -74,12 +75,12 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration:**
+**Node configuration** (we'll set up a **Task changed** trigger):
 1. Add an **Asana Trigger** node
 2. Select your credential
-3. **Workspace Name or ID** -- select the mock workspace from the dropdown
-   (the proxy returns a pre-built fixture with workspace `12345 / Mock Workspace`)
-4. **Resource** -- pick any (e.g. `Task`)
+3. **Workspace Name or ID** -- select **Mock Workspace** from the dropdown
+   (the proxy serves a fixture for this)
+4. **Resource** -- select `Task`
 5. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
@@ -118,11 +119,11 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration:**
+**Node configuration** (we'll set up a **FILE_UPDATE** trigger):
 1. Add a **Figma Trigger (Beta)** node
 2. Select your credential
-3. **Team ID** -- enter any value (e.g. `12345`)
-4. **Events** -- pick any (e.g. `FILE_UPDATE`)
+3. **Team ID** -- enter `12345`
+4. **Events** -- select `FILE_UPDATE`
 5. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
@@ -159,13 +160,12 @@ npx n8n-node-mocker webhook fire \
 | Access Token | `test` |
 
 **Node configuration:**
-1. Add a **GitLab Trigger** node
+1. Search for **GitLab** and pick **On push** from the trigger list
 2. Authentication: **Access Token**
 3. Select your credential
-4. **Repository Owner** -- enter any value (e.g. `janedoe`)
-5. **Repository Name** -- enter any value (e.g. `mock-project`)
-6. **Events** -- pick any (e.g. `Push`)
-7. Click **Listen for test event**
+4. **Repository Owner** -- enter `janedoe`
+5. **Repository Name** -- enter `mock-project`
+6. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -202,11 +202,12 @@ npx n8n-node-mocker webhook fire \
 | API Key | `test` |
 | Signing Secret | `test` |
 
-**Node configuration:**
+**Node configuration** (we'll set up an **Issue Created** trigger):
 1. Add a **Linear Trigger** node
 2. Select your credential
-3. **Resource** + **Event** -- pick any (e.g. Issue / Created)
-4. Activate the workflow (Linear uses active webhooks, not test mode)
+3. **Resource** -- select `Issue`
+4. **Event** -- select `Created`
+5. Activate the workflow (Linear uses active webhooks, not test mode)
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -234,10 +235,10 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration:**
+**Node configuration** (we'll set up a **form_response** trigger):
 1. Add a **Typeform Trigger** node
 2. Select your credential
-3. **Form** -- select from dropdown (proxy returns a mock form list)
+3. **Form** -- select any form from the dropdown (proxy returns a mock list)
 4. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
