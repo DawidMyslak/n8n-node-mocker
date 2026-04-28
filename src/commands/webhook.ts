@@ -44,14 +44,19 @@ webhookCommand
 			process.exit(1);
 		}
 
-		// For Figma, auto-detect the captured passcode from the proxy
-		if (opts.service.toLowerCase() === 'figma') {
-			const passcodePath = join(expandHome(config.caDir), 'figma-passcode.txt');
-			if (existsSync(passcodePath)) {
-				const captured = readFileSync(passcodePath, 'utf-8').trim();
+		// Auto-detect dynamic secrets captured by the proxy
+		const dynamicSecretFiles: Record<string, string> = {
+			figma: 'figma-passcode.txt',
+			gitlab: 'gitlab-token.txt',
+		};
+		const secretFile = dynamicSecretFiles[opts.service.toLowerCase()];
+		if (secretFile) {
+			const secretPath = join(expandHome(config.caDir), secretFile);
+			if (existsSync(secretPath)) {
+				const captured = readFileSync(secretPath, 'utf-8').trim();
 				if (captured) {
 					serviceConfig.signingSecret = captured;
-					console.log(chalk.dim(`  Using captured Figma passcode from ${passcodePath}`));
+					console.log(chalk.dim(`  Using captured ${opts.service} secret from ${secretPath}`));
 				}
 			}
 		}

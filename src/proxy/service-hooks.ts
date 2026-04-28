@@ -45,6 +45,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: figmaCapturePasscode,
 	},
+	{
+		match: (ctx) =>
+			ctx.method === 'POST' &&
+			ctx.path.includes('/api/v4/projects/') &&
+			ctx.path.endsWith('/hooks') &&
+			ctx.bodyStr !== undefined,
+		run: gitlabCaptureToken,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -121,6 +129,37 @@ function asanaHandshake(ctx: ServiceHookContext): void {
  *
  * @see https://developers.figma.com/docs/rest-api/webhooks-security/
  */
+/**
+ * GitLab webhook token capture.
+ *
+ * When n8n registers a GitLab webhook, it generates a random 64-char hex
+ * token via `randomBytes(32).toString('hex')` and sends it in the POST body
+ * as `token`. n8n stores this token and compares it with the `X-Gitlab-Token`
+ * header on every incoming webhook event. We capture it so `webhook fire`
+ * can use the same token.
+ *
+ * The token is saved to ~/.n8n-node-mocker/gitlab-token.txt
+ *
+ * @see https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
+ */
+function gitlabCaptureToken(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { token?: string };
+		const token = body.token;
+		if (!token || typeof token !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'gitlab-token.txt');
+		writeFileSync(filePath, token);
+
+		console.log(chalk.magenta(`GITLAB: captured webhook token -> ${filePath}`));
+		console.log(chalk.magenta(`GITLAB: will be auto-detected by 'webhook fire --service gitlab'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
 function figmaCapturePasscode(ctx: ServiceHookContext): void {
 	try {
 		const body = JSON.parse(ctx.bodyStr!) as { passcode?: string; data?: { passcode?: string } };

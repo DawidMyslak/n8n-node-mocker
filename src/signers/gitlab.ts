@@ -1,10 +1,14 @@
 import type { WebhookSigner, SignResult } from './index.js';
 
 /**
- * GitLab uses a simple token match, not HMAC. The secret token is sent
+ * GitLab uses a simple secret token match (not HMAC). The token is sent
  * verbatim in the `X-Gitlab-Token` header for the receiver to compare.
  *
- * @see https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
+ * Note: GitLab also supports a newer "signing token" (HMAC-SHA256 via
+ * `webhook-signature` header), but n8n uses the legacy secret token approach.
+ *
+ * @see https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#delivery-headers
+ * @see https://docs.gitlab.com/ee/api/project_webhooks.html
  */
 export const gitlabSigner: WebhookSigner = {
 	service: 'gitlab',
