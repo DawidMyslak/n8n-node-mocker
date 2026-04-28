@@ -193,6 +193,7 @@ the static config secret.
 - [ ] Add default secret in `src/config.ts` and `config.example.yaml`
 - [ ] Write test in `src/signers/<name>.test.ts`
 - [ ] `pnpm build && pnpm test` passes
+- [ ] Add testing instructions in `TESTING.md`
 - [ ] Update the service table in `README.md` if needed
 
 ## Service Hooks (`src/proxy/service-hooks.ts`)

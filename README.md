@@ -259,6 +259,12 @@ Each signer has been verified against the official API documentation.
 | Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | hex, secret is hex-encoded key |
 | Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | hex |
 
+## Testing Each Service
+
+See **[TESTING.md](TESTING.md)** for step-by-step instructions to test
+each supported trigger node -- including exact credential values, node
+configuration, and the `webhook fire` command to run.
+
 ## Adding a New Service
 
 1. Create `src/signers/my-service.ts`:
