@@ -42,12 +42,11 @@ as the value unless noted otherwise.
 | User ID | `test` |
 | API Key | `test` |
 
-**Node configuration** (we'll set up an **appointment.scheduled** trigger):
-1. Add an **Acuity Scheduling Trigger** node
+**Node configuration:**
+1. Search for **Acuity Scheduling** and pick **On appointment scheduled** from the trigger list
 2. Select your credential
-3. **Event** -- select `appointment.scheduled`
-4. Leave **Resolve Data** enabled (the proxy has a fixture for appointment details)
-5. Click **Listen for test event**
+3. Leave **Resolve Data** enabled (the proxy has a fixture for appointment details)
+4. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -75,13 +74,12 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration** (we'll set up a **Task changed** trigger):
-1. Add an **Asana Trigger** node
+**Node configuration:**
+1. Search for **Asana** and pick **On task changed** from the trigger list
 2. Select your credential
 3. **Workspace Name or ID** -- select **Mock Workspace** from the dropdown
    (the proxy serves a fixture for this)
-4. **Resource** -- select `Task`
-5. Click **Listen for test event**
+4. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -119,12 +117,11 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration** (we'll set up a **FILE_UPDATE** trigger):
-1. Add a **Figma Trigger (Beta)** node
+**Node configuration:**
+1. Search for **Figma** and pick **On file update** from the trigger list
 2. Select your credential
 3. **Team ID** -- enter `12345`
-4. **Events** -- select `FILE_UPDATE`
-5. Click **Listen for test event**
+4. Click **Listen for test event**
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -202,12 +199,10 @@ npx n8n-node-mocker webhook fire \
 | API Key | `test` |
 | Signing Secret | `test` |
 
-**Node configuration** (we'll set up an **Issue Created** trigger):
-1. Add a **Linear Trigger** node
+**Node configuration:**
+1. Search for **Linear** and pick **On issue created** from the trigger list
 2. Select your credential
-3. **Resource** -- select `Issue`
-4. **Event** -- select `Created`
-5. Activate the workflow (Linear uses active webhooks, not test mode)
+3. Activate the workflow (Linear uses active webhooks, not test mode)
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -235,8 +230,8 @@ npx n8n-node-mocker webhook fire \
 |-------|-------|
 | Access Token | `test` |
 
-**Node configuration** (we'll set up a **form_response** trigger):
-1. Add a **Typeform Trigger** node
+**Node configuration:**
+1. Search for **Typeform** and pick **On form response** from the trigger list
 2. Select your credential
 3. **Form** -- select any form from the dropdown (proxy returns a mock list)
 4. Click **Listen for test event**
