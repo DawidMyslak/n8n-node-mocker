@@ -48,6 +48,7 @@ webhookCommand
 		const dynamicSecretFiles: Record<string, string> = {
 			figma: 'figma-passcode.txt',
 			gitlab: 'gitlab-token.txt',
+			netlify: 'netlify-secret.txt',
 		};
 		const secretFile = dynamicSecretFiles[opts.service.toLowerCase()];
 		if (secretFile) {

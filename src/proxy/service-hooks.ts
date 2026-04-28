@@ -53,6 +53,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: gitlabCaptureToken,
 	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'api.netlify.com' &&
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/hooks') &&
+			ctx.bodyStr !== undefined,
+		run: netlifyCaptureSecret,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -155,6 +163,36 @@ function gitlabCaptureToken(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`GITLAB: captured webhook token -> ${filePath}`));
 		console.log(chalk.magenta(`GITLAB: will be auto-detected by 'webhook fire --service gitlab'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Netlify webhook secret capture.
+ *
+ * When n8n registers a Netlify webhook, it generates a random 64-char hex
+ * secret and sends it as `data.signature_secret` in the POST body. n8n
+ * stores this secret and uses it to verify the JWT (HS256) in the
+ * `X-Webhook-Signature` header on every incoming event.
+ *
+ * The secret is saved to ~/.n8n-node-mocker/netlify-secret.txt
+ *
+ * @see https://docs.netlify.com/site-deploys/notifications/#payload-signature
+ */
+function netlifyCaptureSecret(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { data?: { signature_secret?: string } };
+		const secret = body.data?.signature_secret;
+		if (!secret || typeof secret !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'netlify-secret.txt');
+		writeFileSync(filePath, secret);
+
+		console.log(chalk.magenta(`NETLIFY: captured webhook secret -> ${filePath}`));
+		console.log(chalk.magenta(`NETLIFY: will be auto-detected by 'webhook fire --service netlify'`));
 	} catch {
 		// Body wasn't JSON
 	}
