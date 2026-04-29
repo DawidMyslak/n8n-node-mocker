@@ -109,6 +109,50 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## Customer.io
+
+**Credential type:** Customer.io API
+
+| Field | Value |
+|-------|-------|
+| Tracking API Key | `test` |
+| Region | **Global region** |
+| Tracking Site ID | `test` |
+| App API Key | `test` |
+| Webhook Signing Key | `test` |
+
+**Node configuration:**
+1. Search for **Customer.io** and pick **On email sent** from the trigger list
+2. Select your credential
+3. **Events** -- select **Email Sent** (or any events you want)
+4. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service customerio \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event email.sent
+```
+
+**What happens behind the scenes:**
+- n8n calls `GET api.customer.io/v1/reporting_webhooks` to check for existing
+  webhooks -- proxy returns an empty list
+- n8n calls `POST api.customer.io/v1/reporting_webhooks` to register --
+  proxy returns a mock webhook ID
+- `webhook fire` computes HMAC-SHA256 of `v0:<timestamp>:<body>` and sends
+  the `x-cio-signature` and `x-cio-timestamp` headers
+
+**Gotchas:**
+- The App API Key (not Tracking API Key) is used for webhook management.
+  Auth is via `Bearer` token in the header.
+- Event names use dots in n8n (e.g. `email.sent`) but the API uses underscores
+  (e.g. `email_sent`). The node converts automatically.
+
+**Available events:** `email.sent`, `email.opened`, `customer.subscribed`
+
+---
+
 ## Figma
 
 **Credential type:** Figma API

@@ -1,0 +1,23 @@
+{
+	"event_id": "01MOCK000000000000000000000000001",
+	"object_type": "email",
+	"timestamp": 1700000000,
+	"metric": "sent",
+	"data": {
+		"action_id": 100,
+		"broadcast_id": null,
+		"campaign_id": 10,
+		"content_id": 200,
+		"customer_id": "cus_mock_001",
+		"delivery_id": "del_mock_001",
+		"identifiers": {
+			"id": "cus_mock_001",
+			"email": "jane.doe@example.com"
+		},
+		"headers": {
+			"Message-ID": "<mock@mail.customer.io>"
+		},
+		"recipient": "jane.doe@example.com",
+		"subject": "Welcome to our platform!"
+	}
+}

@@ -33,6 +33,7 @@ src/
   templates/
     acuityscheduling/       Built-in webhook event payloads
     asana/
+    customerio/
     figma/
     gitlab/
     linear/
@@ -42,6 +43,7 @@ src/
     typeform/
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
+  api.customer.io/          Customer.io reporting webhooks
   api.figma.com/            Figma webhooks
   api.linear.app/           Linear GraphQL (Teams, webhookCreate, webhookDelete)
   api.netlify.com/          Netlify sites, hooks

@@ -1,0 +1,13 @@
+{
+	"event_id": "01MOCK000000000000000000000000003",
+	"object_type": "customer",
+	"timestamp": 1700000200,
+	"metric": "subscribed",
+	"data": {
+		"customer_id": "cus_mock_001",
+		"identifiers": {
+			"id": "cus_mock_001",
+			"email": "jane.doe@example.com"
+		}
+	}
+}
