@@ -1,0 +1,37 @@
+{
+	"action": {
+		"id": "000000000000000000000a01",
+		"idMemberCreator": "000000000000000000000001",
+		"type": "createCard",
+		"date": "2024-09-01T12:00:00.000Z",
+		"data": {
+			"board": {
+				"id": "000000000000000000000b01",
+				"name": "Mock Board",
+				"shortLink": "mockBrd"
+			},
+			"list": {
+				"id": "000000000000000000000c01",
+				"name": "To Do"
+			},
+			"card": {
+				"id": "000000000000000000000d01",
+				"name": "Mock Card",
+				"shortLink": "mockCrd",
+				"idShort": 1
+			}
+		},
+		"memberCreator": {
+			"id": "000000000000000000000001",
+			"username": "mockuser",
+			"fullName": "Mock User"
+		}
+	},
+	"model": {
+		"id": "000000000000000000000b01",
+		"name": "Mock Board",
+		"desc": "",
+		"closed": false,
+		"url": "https://trello.com/b/mockBrd/mock-board"
+	}
+}

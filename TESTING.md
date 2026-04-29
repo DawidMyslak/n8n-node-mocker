@@ -229,6 +229,71 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## Trello
+
+**Credential type:** Trello API
+
+| Field | Value |
+|-------|-------|
+| API Key | `test` |
+| API Token | `test` |
+| OAuth Secret | `test` |
+
+**Node configuration:**
+1. Search for **Trello** and pick **Trello Trigger** from the trigger list
+2. Select your credential
+3. **Model ID** -- enter a board/card/list ID (e.g. `000000000000000000000b01`)
+4. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+
+Trello signs webhooks using the *registered* `callbackURL` (the production
+webhook URL n8n sends to Trello). In test mode, the webhook listener is at
+`/webhook-test/...`, but the registered callbackURL is `/webhook/...`. You
+must pass `--webhook-url` with the production URL so the signature matches:
+
+```bash
+npx n8n-node-mocker webhook fire \
+  --service trello \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --webhook-url http://localhost:5678/webhook/<id>/webhook \
+  --event createCard
+```
+
+The `--url` is where the request is sent (the test listener). The
+`--webhook-url` is the callbackURL used for signing (what n8n registered
+with Trello). To get the production URL, replace `webhook-test` with
+`webhook` in the test URL.
+
+**What happens behind the scenes:**
+- n8n credential test calls `GET /1/tokens/test/member` -- proxy serves a
+  fixture via parent-path matching
+- n8n calls `GET /1/tokens/test/webhooks` to check for existing webhooks --
+  proxy returns an empty list
+- n8n calls `POST /1/tokens/test/webhooks` with `callbackURL` and `idModel` --
+  proxy returns a mock webhook with an `id`
+- Trello normally sends a HEAD request to the callbackURL to verify it exists --
+  n8n's `setup` webhook handler responds with 200 automatically
+- `webhook fire` computes HMAC-SHA1 of `body + callbackURL` using the OAuth
+  Secret, and sends it in the `x-trello-webhook` header
+
+**Gotchas:**
+- Trello **does not let you filter by event type** -- you subscribe to a model
+  (board, card, list, member) and receive all actions on that model.
+- The `OAuth Secret` is the application's secret from the Trello Power-Up
+  admin page, **not** the API Key or Token.
+- Trello uses a **unique signing scheme** where the body is concatenated
+  with the callbackURL *before* HMAC-SHA1 hashing (prevents replay attacks
+  between endpoints). The callbackURL is the *registered* URL, not the URL
+  the request is sent to -- this is why `--webhook-url` is needed in test mode.
+- The fixtures use `test` as the API Token value in the URL path
+  (e.g. `/1/tokens/test/webhooks`). If you change the token value in
+  credentials, you'll need matching fixtures.
+
+**Available events:** `createCard`, `updateCard`, `addMemberToCard`
+
+---
+
 ## Twilio
 
 **Credential type:** Twilio API

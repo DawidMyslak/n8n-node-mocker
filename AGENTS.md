@@ -41,6 +41,7 @@ fixtures/                   Committed fixture files (per-hostname)
   api.twilio.com/           Twilio account verification
   app.asana.com/            Asana workspaces, webhooks
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
+  api.trello.com/           Trello credential test + webhook CRUD
   gitlab.com/               GitLab project hooks
 ```
 

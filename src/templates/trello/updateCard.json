@@ -1,0 +1,36 @@
+{
+	"action": {
+		"id": "000000000000000000000a02",
+		"idMemberCreator": "000000000000000000000001",
+		"type": "updateCard",
+		"date": "2024-09-01T12:05:00.000Z",
+		"data": {
+			"board": {
+				"id": "000000000000000000000b01",
+				"name": "Mock Board",
+				"shortLink": "mockBrd"
+			},
+			"card": {
+				"id": "000000000000000000000d01",
+				"name": "Mock Card (updated)",
+				"shortLink": "mockCrd",
+				"idShort": 1
+			},
+			"old": {
+				"name": "Mock Card"
+			}
+		},
+		"memberCreator": {
+			"id": "000000000000000000000001",
+			"username": "mockuser",
+			"fullName": "Mock User"
+		}
+	},
+	"model": {
+		"id": "000000000000000000000b01",
+		"name": "Mock Board",
+		"desc": "",
+		"closed": false,
+		"url": "https://trello.com/b/mockBrd/mock-board"
+	}
+}
