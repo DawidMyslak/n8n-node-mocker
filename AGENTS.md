@@ -36,8 +36,12 @@ src/
     ...
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
-  app.asana.com/            Asana workspaces, webhooks
   api.figma.com/            Figma webhooks
+  api.netlify.com/          Netlify sites, hooks
+  api.twilio.com/           Twilio account verification
+  app.asana.com/            Asana workspaces, webhooks
+  events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
+  gitlab.com/               GitLab project hooks
 ```
 
 ## How to Add a New Fake API / Service
@@ -118,6 +122,8 @@ Variations to handle:
   sending, e.g. `webhookTimestamp` for Linear
 - **Token-based**: just return the secret as the header value (see `gitlab.ts`)
 - **URL in signature**: use `meta.webhookUrl` (see `trello.ts`, `twilio.ts`)
+- **Query params on webhook URL**: return `queryParams` in `SignResult` to
+  append params to the URL before sending (see `twilio.ts` -- `bodySHA256`)
 
 ### Step 3: Register the signer
 
@@ -219,6 +225,8 @@ Each hook checks if its `match` function returns true, then runs.
 |---------|------|-------------|
 | **Asana** | `asanaHandshake` | After `POST /webhooks`, sends `X-Hook-Secret` to n8n's webhook URL. n8n stores this secret for future HMAC verification. Uses the signing secret from config. |
 | **Figma** | `figmaCapturePasscode` | After `POST /webhooks`, reads the `passcode` from n8n's request body and saves it to `~/.n8n-node-mocker/figma-passcode.txt`. The `webhook fire` command auto-reads this file so it can inject the correct passcode into events. |
+| **GitLab** | `gitlabCaptureToken` | After `POST /hooks`, reads the `token` field from n8n's request body and saves it to `~/.n8n-node-mocker/gitlab-token.txt`. |
+| **Netlify** | `netlifyCaptureSecret` | After `POST /hooks`, reads `data.signature_secret` from n8n's request body and saves it to `~/.n8n-node-mocker/netlify-secret.txt`. Used for JWT signing. |
 
 ### Adding a new hook
 
@@ -253,6 +261,8 @@ Each hook checks if its `match` function returns true, then runs.
 | Plain token | n/a | n/a | `gitlab.ts` |
 | Body patch | varies | varies | `linear.ts` (webhookTimestamp), `microsoft-teams.ts` (clientState) |
 | URL in signing data | sha1 | base64 | `twilio.ts`, `trello.ts` |
+| Query params on URL | sha1 | base64 | `twilio.ts` (bodySHA256 appended to URL) |
+| JWT (JWS) | HS256 | base64 | `netlify.ts` |
 
 ## Build & Test
 
@@ -282,6 +292,7 @@ interface SignMeta {
 interface SignResult {
   headers: Record<string, string>;   // headers to set on the webhook POST
   bodyPatch?: Record<string, unknown>; // fields to merge into JSON body
+  queryParams?: Record<string, string>; // query params to append to webhook URL
 }
 ```
 
