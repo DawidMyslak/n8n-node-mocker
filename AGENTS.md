@@ -31,17 +31,23 @@ src/
     linear.ts               One file per service
     ...
   templates/
-    linear/                 Built-in webhook event payloads
-      issue.created.json
-    ...
+    acuityscheduling/       Built-in webhook event payloads
+    asana/
+    figma/
+    gitlab/
+    linear/
+    netlify/
+    trello/
+    twilio/
+    typeform/
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
   api.figma.com/            Figma webhooks
   api.netlify.com/          Netlify sites, hooks
+  api.trello.com/           Trello credential test + webhook CRUD
   api.twilio.com/           Twilio account verification
   app.asana.com/            Asana workspaces, webhooks
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
-  api.trello.com/           Trello credential test + webhook CRUD
   gitlab.com/               GitLab project hooks
 ```
 

@@ -351,15 +351,31 @@ src/
     mitm-proxy.ts               # HTTPS MITM proxy core
     ca.ts                       # CA + server certificate generation
     graphql-parser.ts           # GraphQL operation name extraction
+    service-hooks.ts            # Per-provider custom logic (handshakes, secret capture)
   fixtures/
     fixture-store.ts            # Fixture file I/O
   signers/
     index.ts                    # Signer registry + interface
-    linear.ts, typeform.ts ...  # Per-service signers
+    linear.ts, typeform.ts ...  # Per-service signers (20 total)
   templates/
-    linear/                     # Built-in event payloads
-    typeform/
+    acuityscheduling/           # Built-in event payloads per service
+    asana/
     figma/
+    gitlab/
+    linear/
+    netlify/
+    trello/
+    twilio/
+    typeform/
+fixtures/                       # Committed fixture files (per-hostname)
+  acuityscheduling.com/
+  api.figma.com/
+  api.netlify.com/
+  api.trello.com/
+  api.twilio.com/
+  app.asana.com/
+  events.twilio.com/
+  gitlab.com/
 ```
 
 ## How `NODE_EXTRA_CA_CERTS` Works
