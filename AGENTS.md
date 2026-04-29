@@ -33,6 +33,7 @@ src/
   templates/
     acuityscheduling/       Built-in webhook event payloads
     asana/
+    calendly/
     customerio/
     figma/
     gitlab/
@@ -43,6 +44,7 @@ src/
     typeform/
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
+  api.calendly.com/         Calendly v2 API (users, webhook_subscriptions)
   api.customer.io/          Customer.io reporting webhooks
   api.figma.com/            Figma webhooks
   api.linear.app/           Linear GraphQL (Teams, webhookCreate, webhookDelete)
@@ -50,6 +52,7 @@ fixtures/                   Committed fixture files (per-hostname)
   api.trello.com/           Trello credential test + webhook CRUD
   api.twilio.com/           Twilio account verification
   app.asana.com/            Asana workspaces, webhooks
+  calendly.com/             Calendly v1 API (credential test, hooks)
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
   gitlab.com/               GitLab project hooks
 ```

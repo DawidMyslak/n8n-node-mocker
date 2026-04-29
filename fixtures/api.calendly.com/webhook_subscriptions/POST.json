@@ -1,0 +1,15 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"resource": {
+				"uri": "https://api.calendly.com/webhook_subscriptions/mock-webhook-001",
+				"callback_url": "https://n8n.example.com/webhook/test/webhook",
+				"events": ["invitee.created"],
+				"scope": "user",
+				"state": "active"
+			}
+		}
+	}
+}

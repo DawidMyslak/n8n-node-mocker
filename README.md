@@ -250,7 +250,7 @@ Each signer has been verified against the official API documentation.
 | AWS SNS | RSA-SHA256 | `x-amz-sns-message-type` | [API docs](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) | | Certificate-based (placeholder) |
 | Box | HMAC-SHA256 | `box-signature-primary` | [API docs](https://box.dev/guides/webhooks/v2/signatures-v2) | | base64, body + timestamp bytes |
 | Cal.com | HMAC-SHA256 | `x-cal-signature-256` | [API docs](https://cal.com/docs/core-features/webhooks) | | hex |
-| Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | | `t=timestamp,v1=signature` |
+| Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | Yes | `t=timestamp,v1=signature` |
 | Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | Yes | hex, signs `v0:timestamp:body` |
 | Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | | `sha256=` prefix + hex |
 | MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | | hex (new API), base64 (classic) |

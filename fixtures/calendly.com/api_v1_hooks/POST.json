@@ -1,0 +1,9 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"id": 1
+		}
+	}
+}

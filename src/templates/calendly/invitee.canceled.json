@@ -1,0 +1,35 @@
+{
+	"event": "invitee.canceled",
+	"created_at": "2024-01-15T11:00:00.000000Z",
+	"created_by": "https://api.calendly.com/users/mock-user-001",
+	"payload": {
+		"cancel_url": "https://calendly.com/cancellations/mock-cancel-001",
+		"cancellation": {
+			"canceled_by": "John Doe",
+			"reason": "Schedule conflict"
+		},
+		"created_at": "2024-01-15T10:30:00.000000Z",
+		"email": "invitee@example.com",
+		"event": "https://api.calendly.com/scheduled_events/mock-event-001",
+		"name": "John Doe",
+		"new_invitee": null,
+		"old_invitee": null,
+		"questions_and_answers": [],
+		"reschedule_url": "https://calendly.com/reschedulings/mock-reschedule-001",
+		"rescheduled": false,
+		"routing_form_submission": null,
+		"status": "canceled",
+		"text_reminder_number": null,
+		"timezone": "America/New_York",
+		"tracking": {
+			"utm_campaign": null,
+			"utm_source": null,
+			"utm_medium": null,
+			"utm_content": null,
+			"utm_term": null,
+			"salesforce_uuid": null
+		},
+		"updated_at": "2024-01-15T11:00:00.000000Z",
+		"uri": "https://api.calendly.com/scheduled_events/mock-event-001/invitees/mock-invitee-001"
+	}
+}

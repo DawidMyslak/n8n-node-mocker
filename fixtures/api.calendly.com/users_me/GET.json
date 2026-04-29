@@ -1,0 +1,16 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"resource": {
+				"uri": "https://api.calendly.com/users/mock-user-001",
+				"name": "Mock User",
+				"slug": "mock-user",
+				"email": "mock@example.com",
+				"timezone": "America/New_York",
+				"current_organization": "https://api.calendly.com/organizations/mock-org-001"
+			}
+		}
+	}
+}

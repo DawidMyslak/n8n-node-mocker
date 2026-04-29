@@ -46,6 +46,7 @@ webhookCommand
 
 		// Auto-detect dynamic secrets captured by the proxy
 		const dynamicSecretFiles: Record<string, string> = {
+			calendly: 'calendly-signing-key.txt',
 			figma: 'figma-passcode.txt',
 			gitlab: 'gitlab-token.txt',
 			netlify: 'netlify-secret.txt',

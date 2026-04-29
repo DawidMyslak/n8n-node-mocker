@@ -61,6 +61,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: netlifyCaptureSecret,
 	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'api.calendly.com' &&
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/webhook_subscriptions') &&
+			ctx.bodyStr !== undefined,
+		run: calendlyCaptureSigningKey,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -193,6 +201,36 @@ function netlifyCaptureSecret(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`NETLIFY: captured webhook secret -> ${filePath}`));
 		console.log(chalk.magenta(`NETLIFY: will be auto-detected by 'webhook fire --service netlify'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Calendly webhook signing key capture.
+ *
+ * When n8n registers a Calendly webhook subscription (Access Token auth),
+ * it generates a random 64-char hex signing_key and sends it in the POST
+ * body. n8n stores this in workflow static data and uses it to verify the
+ * HMAC-SHA256 signature in the `Calendly-Webhook-Signature` header.
+ *
+ * The key is saved to ~/.n8n-node-mocker/calendly-signing-key.txt
+ *
+ * @see https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures
+ */
+function calendlyCaptureSigningKey(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { signing_key?: string };
+		const signingKey = body.signing_key;
+		if (!signingKey || typeof signingKey !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'calendly-signing-key.txt');
+		writeFileSync(filePath, signingKey);
+
+		console.log(chalk.magenta(`CALENDLY: captured signing key -> ${filePath}`));
+		console.log(chalk.magenta(`CALENDLY: will be auto-detected by 'webhook fire --service calendly'`));
 	} catch {
 		// Body wasn't JSON
 	}
