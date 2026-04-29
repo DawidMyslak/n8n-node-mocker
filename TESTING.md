@@ -356,7 +356,10 @@ npx n8n-node-mocker webhook fire \
 **Node configuration:**
 1. Search for **Linear** and pick **On issue created** from the trigger list
 2. Select your credential
-3. Activate the workflow (Linear uses active webhooks, not test mode)
+3. **Team Name or ID** -- select **Mock Team** from the dropdown
+   (the proxy serves a GraphQL fixture for this)
+4. **Listen to Resources** -- select **Issue**
+5. Activate the workflow (Linear uses active webhooks, not test mode)
 
 **Fire the webhook (Terminal 3):**
 ```bash
@@ -366,11 +369,21 @@ npx n8n-node-mocker webhook fire \
   --event issue.created
 ```
 
+**What happens behind the scenes:**
+- n8n calls `POST api.linear.app/graphql` with `query Teams { ... }` -- proxy
+  serves a fixture with a mock team (enables the dropdown)
+- n8n calls `POST api.linear.app/graphql` with an unnamed `webhooks` query --
+  proxy serves a generic `POST.json` fallback with an empty webhooks list
+- n8n calls `POST api.linear.app/graphql` with `mutation webhookCreate` --
+  proxy returns a mock webhook ID
+
 **Gotchas:**
 - Linear uses **active webhook URLs** (not test URLs). The URL format is
   `/webhook/<id>`, not `/webhook-test/<id>/webhook`.
 - The signing secret in credentials must match the mocker config (`test`).
 - Linear's signer injects a `webhookTimestamp` into the body automatically.
+- Linear uses **GraphQL** for all API calls. Named operations get matched by
+  operation name (e.g. `Teams.json`), unnamed queries fall back to `POST.json`.
 
 **Available events:** `issue.created`, `issue.updated`, `comment.created`
 

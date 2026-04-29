@@ -1,0 +1,18 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"data": {
+				"teams": {
+					"nodes": [
+						{
+							"id": "mock-team-001",
+							"name": "Mock Team"
+						}
+					]
+				}
+			}
+		}
+	}
+}

@@ -43,6 +43,7 @@ src/
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
   api.figma.com/            Figma webhooks
+  api.linear.app/           Linear GraphQL (Teams, webhookCreate, webhookDelete)
   api.netlify.com/          Netlify sites, hooks
   api.trello.com/           Trello credential test + webhook CRUD
   api.twilio.com/           Twilio account verification

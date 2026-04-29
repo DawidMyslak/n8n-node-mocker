@@ -118,7 +118,9 @@ fixtures/
       GET.json              # Matches GET /api/v1/appointments/<any-id>
   api.linear.app/
     graphql/
-      IssueCreate.json      # Matched by GraphQL operation name
+      Teams.json            # Matched by GraphQL operation name
+      webhookCreate.json
+      POST.json             # Fallback for unnamed GraphQL queries
   api.example.com/
     api_v1_users/
       GET.json              # Matched by HTTP method
@@ -242,7 +244,7 @@ Each signer has been verified against the official API documentation.
 | Asana | HMAC-SHA256 | `x-hook-signature` | [API docs](https://developers.asana.com/docs/webhooks-guide#security) | Yes | hex, X-Hook-Secret handshake |
 | Figma | Passcode | (in body) | [API docs](https://developers.figma.com/docs/rest-api/webhooks-security/) | Yes | Passcode field echoed in event body |
 | GitLab | Token | `x-gitlab-token` | [API docs](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) | Yes | Simple token match, not HMAC |
-| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) | | hex, + `webhookTimestamp` in body |
+| Linear | HMAC-SHA256 | `linear-signature` | [API docs](https://developers.linear.app/docs/graphql/webhooks) | Yes | hex, + `webhookTimestamp` in body |
 | Netlify | JWT (HS256) | `x-webhook-signature` | [API docs](https://docs.netlify.com/site-deploys/notifications/#payload-signature) | Yes | JWS token with sha256 of body |
 | Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) | | `sha256=` + base64 |
 | AWS SNS | RSA-SHA256 | `x-amz-sns-message-type` | [API docs](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) | | Certificate-based (placeholder) |
