@@ -1,44 +1,44 @@
-import { createHmac } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 
 import type { WebhookSigner, SignResult, SignMeta } from './index.js';
 
 /**
- * Twilio signs webhooks using HMAC-SHA1, base64-encoded.
- * The signed data is the full webhook URL + sorted POST params (key+value pairs).
- * The secret is the account's auth token.
+ * Twilio Event Streams webhook signing.
+ *
+ * For JSON webhooks (used by n8n's TwilioTrigger), Twilio:
+ * 1. Computes SHA-256 of the raw JSON body
+ * 2. Appends it as `?bodySHA256=<hex>` to the sink URL
+ * 3. HMAC-SHA1 of the full URL (with bodySHA256 param) using the auth token
+ * 4. Sends the base64 result in the `X-Twilio-Signature` header
+ *
+ * The secret is the Twilio account's Auth Token.
  *
  * @see https://www.twilio.com/docs/usage/webhooks/webhooks-security
+ * @see https://twilio.com/docs/events/webhook-quickstart
  */
 export const twilioSigner: WebhookSigner = {
 	service: 'twilio',
-	description: 'HMAC-SHA1, base64, X-Twilio-Signature header (URL + sorted params)',
+	description: 'HMAC-SHA1, base64, bodySHA256 query param + URL signing (Event Streams)',
 	signatureAlgorithm: 'HMAC-SHA1',
 	signatureHeader: 'x-twilio-signature',
 
 	sign(payload: Buffer, secret: string, meta?: SignMeta): SignResult {
 		const url = meta?.webhookUrl ?? '';
-		let dataToSign = url;
 
-		try {
-			const params = JSON.parse(payload.toString('utf-8'));
-			if (typeof params === 'object' && params !== null) {
-				const sortedKeys = Object.keys(params).sort();
-				for (const key of sortedKeys) {
-					dataToSign += key + params[key];
-				}
-			}
-		} catch {
-			// If body isn't JSON, just use the URL
-		}
+		const bodySHA256 = createHash('sha256').update(payload).digest('hex');
+		const signedUrl = url.includes('?')
+			? `${url}&bodySHA256=${bodySHA256}`
+			: `${url}?bodySHA256=${bodySHA256}`;
 
-		const hmac = createHmac('sha1', secret);
-		hmac.update(dataToSign);
-		const signature = hmac.digest('base64');
+		const signature = createHmac('sha1', secret).update(signedUrl).digest('base64');
 
 		return {
 			headers: {
 				'x-twilio-signature': signature,
 				'content-type': 'application/json',
+			},
+			queryParams: {
+				bodySHA256,
 			},
 		};
 	},

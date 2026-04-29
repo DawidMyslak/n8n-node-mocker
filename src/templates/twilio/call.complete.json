@@ -1,0 +1,35 @@
+[
+	{
+		"specversion": "1.0",
+		"type": "com.twilio.voice.insights.call-summary.complete",
+		"source": "/2010-04-01/Accounts/AC00000000000000000000000000000000/Calls/CA0000000000000000000000000000000a.json",
+		"id": "EZ0000000000000000000000000000000b",
+		"dataschema": "https://events-schemas.twilio.com/Voice.InsightsCallSummaryV1/1",
+		"datacontenttype": "application/json",
+		"time": "2024-09-01T12:05:00.000Z",
+		"data": {
+			"accountSid": "AC00000000000000000000000000000000",
+			"callSid": "CA0000000000000000000000000000000a",
+			"callType": "carrier",
+			"callState": "completed",
+			"duration": 42,
+			"connectDuration": 38,
+			"from": {
+				"caller": "+15559876543",
+				"callee": "+15551234567",
+				"carrier": { "name": "Mock Carrier" },
+				"connection": "pstn",
+				"location": { "lat": 37.7749, "lon": -122.4194 }
+			},
+			"to": {
+				"caller": "+15559876543",
+				"callee": "+15551234567",
+				"carrier": { "name": "Mock Carrier" },
+				"connection": "pstn",
+				"location": { "lat": 40.7128, "lon": -74.006 }
+			},
+			"startTime": "2024-09-01T12:00:00.000Z",
+			"endTime": "2024-09-01T12:00:42.000Z"
+		}
+	}
+]

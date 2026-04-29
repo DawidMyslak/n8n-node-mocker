@@ -257,7 +257,7 @@ Each signer has been verified against the official API documentation.
 | Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | | hex, secret is hex-encoded key |
 | Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | | hex |
 | Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | | base64, signs body + callbackURL |
-| Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | | base64, signs URL + sorted params |
+| Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | Yes | base64, bodySHA256 query param + URL signing |
 
 ## Testing Each Service
 

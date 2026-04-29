@@ -1,0 +1,15 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"sid": "AC00000000000000000000000000000000",
+			"friendly_name": "Mock Account",
+			"status": "active",
+			"type": "Full",
+			"date_created": "2024-01-01T00:00:00Z",
+			"date_updated": "2024-01-01T00:00:00Z",
+			"uri": "/2010-04-01/Accounts/AC00000000000000000000000000000000.json"
+		}
+	}
+}

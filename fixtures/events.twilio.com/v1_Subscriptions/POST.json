@@ -1,0 +1,15 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"sid": "DFmock000000000000000000000000000",
+			"account_sid": "AC00000000000000000000000000000000",
+			"description": "Subscription created by n8n Twilio Trigger Node.",
+			"sink_sid": "DGmock000000000000000000000000000",
+			"date_created": "2024-01-01T00:00:00Z",
+			"date_updated": "2024-01-01T00:00:00Z",
+			"url": "https://events.twilio.com/v1/Subscriptions/DFmock000000000000000000000000000"
+		}
+	}
+}

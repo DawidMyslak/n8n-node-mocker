@@ -1,0 +1,22 @@
+[
+	{
+		"specversion": "1.0",
+		"type": "com.twilio.messaging.inbound-message.received",
+		"source": "/2010-04-01/Accounts/AC00000000000000000000000000000000/Messages/SM0000000000000000000000000000000a.json",
+		"id": "EZ0000000000000000000000000000000a",
+		"dataschema": "https://events-schemas.twilio.com/Messaging.InboundMessageV1/1",
+		"datacontenttype": "application/json",
+		"time": "2024-09-01T12:00:00.000Z",
+		"data": {
+			"numMedia": 0,
+			"timestamp": "2024-09-01T12:00:00.000Z",
+			"accountSid": "AC00000000000000000000000000000000",
+			"to": "+15551234567",
+			"numSegments": 1,
+			"messageSid": "SM0000000000000000000000000000000a",
+			"eventName": "com.twilio.messaging.inbound-message.received",
+			"body": "Hello from mock SMS!",
+			"from": "+15559876543"
+		}
+	}
+]

@@ -117,11 +117,19 @@ webhookCommand
 
 		const finalPayload = JSON.stringify(payloadObj);
 
-		console.log(chalk.cyan(`Firing ${opts.service} webhook to ${opts.url}`));
+		// Append query params to URL if the signer requires it (e.g. Twilio's bodySHA256)
+		let targetUrl = opts.url;
+		if (finalResult.queryParams) {
+			const sep = targetUrl.includes('?') ? '&' : '?';
+			const qs = new URLSearchParams(finalResult.queryParams).toString();
+			targetUrl = `${targetUrl}${sep}${qs}`;
+		}
+
+		console.log(chalk.cyan(`Firing ${opts.service} webhook to ${targetUrl}`));
 		console.log(chalk.dim(`  Event: ${opts.event ?? 'custom'}`));
 		console.log(chalk.dim(`  Signature header: ${signer.signatureHeader}`));
 
-		const response = await fetch(opts.url, {
+		const response = await fetch(targetUrl, {
 			method: 'POST',
 			headers: {
 				...finalResult.headers,

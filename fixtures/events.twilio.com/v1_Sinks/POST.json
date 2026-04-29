@@ -1,0 +1,20 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"sid": "DGmock000000000000000000000000000",
+			"account_sid": "AC00000000000000000000000000000000",
+			"description": "Sink created by n8n Twilio Trigger Node.",
+			"sink_configuration": {
+				"destination": "https://n8n.example.com/webhook/test/webhook",
+				"method": "POST"
+			},
+			"sink_type": "webhook",
+			"status": "initialized",
+			"date_created": "2024-01-01T00:00:00Z",
+			"date_updated": "2024-01-01T00:00:00Z",
+			"url": "https://events.twilio.com/v1/Sinks/DGmock000000000000000000000000000"
+		}
+	}
+}

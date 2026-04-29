@@ -229,6 +229,56 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## Twilio
+
+**Credential type:** Twilio API
+
+| Field | Value |
+|-------|-------|
+| Auth Type | **Auth Token** |
+| Account SID | `AC00000000000000000000000000000000` |
+| Auth Token | `test` |
+
+**Node configuration:**
+1. Search for **Twilio** and pick **New SMS** from the trigger list
+2. Select your credential
+3. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service twilio \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event sms.received
+```
+
+**What happens behind the scenes:**
+- n8n credential test calls `GET /2010-04-01/Accounts/<accountSid>.json` --
+  proxy serves a fixture via parent-path matching
+- n8n calls `GET events.twilio.com/v1/Sinks` -- proxy returns an empty list
+  (checkExists returns false)
+- n8n calls `POST events.twilio.com/v1/Sinks` -- proxy returns a mock sink ID
+- n8n calls `POST events.twilio.com/v1/Subscriptions` -- proxy returns a mock
+  subscription ID
+- `webhook fire` computes SHA-256 of the body, appends it as `?bodySHA256=<hash>`
+  to the webhook URL, then HMAC-SHA1 signs the full URL with the auth token
+- n8n verifies the `bodySHA256` query param matches the body hash, then verifies
+  the `x-twilio-signature` header
+
+**Gotchas:**
+- Twilio uses a **unique signing scheme** compared to other services. Instead
+  of signing the body, it appends the body's SHA-256 hash as a URL query param
+  (`?bodySHA256=...`), then HMAC-SHA1 signs the full URL.
+- The `Auth Token` in credentials is used as the signing secret.
+- The `Account SID` must look like a valid Twilio SID (starting with `AC`)
+  for the credential test fixture to match.
+- If you use **API Key** auth type instead of **Auth Token**, signature
+  verification is skipped entirely (n8n falls back to allow all requests).
+
+**Available events:** `sms.received`, `call.complete`
+
+---
+
 ## Linear
 
 **Credential type:** Linear API
@@ -373,5 +423,7 @@ npx n8n-node-mocker webhook fire \
 **Webhook returns 401 Unauthorized:**
 - For static secrets: ensure the credential in n8n and the mocker config
   both use `test`
-- For dynamic secrets (GitLab, Figma): ensure the proxy captured the
-  secret during webhook registration -- check for the capture log message
+- For dynamic secrets (GitLab, Figma, Netlify): ensure the proxy captured
+  the secret during webhook registration -- check for the capture log message
+- For Twilio: ensure the `Auth Token` in n8n credentials matches the
+  `signingSecret` in the mocker config (both should be `test`)

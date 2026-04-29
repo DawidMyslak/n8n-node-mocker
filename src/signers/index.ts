@@ -28,6 +28,8 @@ export interface SignResult {
 	headers: Record<string, string>;
 	/** Modifications to merge into the JSON body (e.g. webhookTimestamp for Linear) */
 	bodyPatch?: Record<string, unknown>;
+	/** Query params to append to the webhook URL before sending (e.g. bodySHA256 for Twilio) */
+	queryParams?: Record<string, string>;
 }
 
 export interface WebhookSigner {
