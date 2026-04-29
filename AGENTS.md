@@ -33,6 +33,7 @@ src/
   templates/
     acuityscheduling/       Built-in webhook event payloads
     asana/
+    cal/
     calendly/
     customerio/
     figma/
@@ -44,6 +45,7 @@ src/
     typeform/
 fixtures/                   Committed fixture files (per-hostname)
   acuityscheduling.com/     Acuity appointment responses
+  api.cal.com/              Cal.com API (memberships, webhooks)
   api.calendly.com/         Calendly v2 API (users, webhook_subscriptions)
   api.customer.io/          Customer.io reporting webhooks
   api.figma.com/            Figma webhooks

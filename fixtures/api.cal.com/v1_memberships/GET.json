@@ -1,0 +1,17 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"memberships": [
+				{
+					"id": 1,
+					"teamId": 1,
+					"userId": 1,
+					"accepted": true,
+					"role": "OWNER"
+				}
+			]
+		}
+	}
+}

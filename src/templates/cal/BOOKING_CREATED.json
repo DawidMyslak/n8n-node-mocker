@@ -1,0 +1,37 @@
+{
+	"triggerEvent": "BOOKING_CREATED",
+	"createdAt": "2024-01-15T10:30:00.000Z",
+	"payload": {
+		"type": "30min",
+		"title": "30min between Mock User and John Doe",
+		"description": "",
+		"additionalNotes": "",
+		"customInputs": {},
+		"startTime": "2024-01-16T14:00:00.000Z",
+		"endTime": "2024-01-16T14:30:00.000Z",
+		"organizer": {
+			"id": 1,
+			"name": "Mock User",
+			"email": "mock@example.com",
+			"timeZone": "America/New_York",
+			"language": { "locale": "en" }
+		},
+		"attendees": [
+			{
+				"email": "john@example.com",
+				"name": "John Doe",
+				"timeZone": "America/New_York",
+				"language": { "locale": "en" }
+			}
+		],
+		"location": "Cal Video",
+		"destinationCalendar": null,
+		"status": "ACCEPTED",
+		"uid": "mock-booking-uid-001",
+		"metadata": {},
+		"responses": {
+			"name": { "label": "your_name", "value": "John Doe" },
+			"email": { "label": "email_address", "value": "john@example.com" }
+		}
+	}
+}

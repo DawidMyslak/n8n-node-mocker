@@ -69,6 +69,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: calendlyCaptureSigningKey,
 	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'api.cal.com' &&
+			ctx.method === 'POST' &&
+			(ctx.path.endsWith('/webhooks') || ctx.path.endsWith('/hooks')) &&
+			ctx.bodyStr !== undefined,
+		run: calCaptureSecret,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -231,6 +239,36 @@ function calendlyCaptureSigningKey(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`CALENDLY: captured signing key -> ${filePath}`));
 		console.log(chalk.magenta(`CALENDLY: will be auto-detected by 'webhook fire --service calendly'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Cal.com webhook secret capture.
+ *
+ * When n8n registers a Cal.com webhook, it generates a random 64-char hex
+ * secret and sends it in the POST body as `secret`. n8n stores this in
+ * workflow static data and uses it to verify the HMAC-SHA256 signature
+ * in the `X-Cal-Signature-256` header.
+ *
+ * The secret is saved to ~/.n8n-node-mocker/cal-secret.txt
+ *
+ * @see https://cal.com/docs/core-features/webhooks
+ */
+function calCaptureSecret(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { secret?: string };
+		const secret = body.secret;
+		if (!secret || typeof secret !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'cal-secret.txt');
+		writeFileSync(filePath, secret);
+
+		console.log(chalk.magenta(`CAL: captured webhook secret -> ${filePath}`));
+		console.log(chalk.magenta(`CAL: will be auto-detected by 'webhook fire --service cal'`));
 	} catch {
 		// Body wasn't JSON
 	}

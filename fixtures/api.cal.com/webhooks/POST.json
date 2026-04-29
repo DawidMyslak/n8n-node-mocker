@@ -1,0 +1,14 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"webhook": {
+				"id": 1,
+				"subscriberUrl": "https://n8n.example.com/webhook/test/webhook",
+				"eventTriggers": ["BOOKING_CREATED"],
+				"active": true
+			}
+		}
+	}
+}
