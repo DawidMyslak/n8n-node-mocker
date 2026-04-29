@@ -30,5 +30,14 @@
 		"desc": "",
 		"closed": false,
 		"url": "https://trello.com/b/mockBrd/mock-board"
+	},
+	"webhook": {
+		"id": "mock00000000000000000001",
+		"description": "n8n Webhook - 000000000000000000000b01",
+		"idModel": "000000000000000000000b01",
+		"callbackURL": "https://n8n.example.com/webhook/test/webhook",
+		"active": true,
+		"consecutiveFailures": 0,
+		"firstConsecutiveFailDate": null
 	}
 }
