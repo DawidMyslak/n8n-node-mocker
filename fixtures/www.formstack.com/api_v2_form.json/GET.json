@@ -1,0 +1,33 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "forms": [
+        {
+          "id": "12345",
+          "name": "Contact Form",
+          "url": "https://www.formstack.com/forms/?12345",
+          "views": 100,
+          "created": "2024-01-01 00:00:00",
+          "updated": "2024-01-15 12:00:00",
+          "submissions": 42,
+          "submissions_unread": 5,
+          "inactive": false
+        },
+        {
+          "id": "67890",
+          "name": "Feedback Survey",
+          "url": "https://www.formstack.com/forms/?67890",
+          "views": 50,
+          "created": "2024-02-01 00:00:00",
+          "updated": "2024-02-15 12:00:00",
+          "submissions": 18,
+          "submissions_unread": 2,
+          "inactive": false
+        }
+      ],
+      "total": 2
+    }
+  }
+}

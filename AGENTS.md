@@ -37,6 +37,7 @@ src/
     calendly/
     customerio/
     figma/
+    formstack/
     gitlab/
     linear/
     netlify/
@@ -61,6 +62,7 @@ fixtures/                   Committed fixture files (per-hostname)
   onfleet.com/              Onfleet API (auth test, webhooks)
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
   gitlab.com/               GitLab project hooks
+  www.formstack.com/        Formstack forms + webhook management
 ```
 
 ## How to Add a New Fake API / Service

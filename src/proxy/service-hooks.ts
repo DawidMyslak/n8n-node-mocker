@@ -85,6 +85,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: taigaCaptureKey,
 	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'www.formstack.com' &&
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/webhook.json') &&
+			ctx.bodyStr !== undefined,
+		run: formstackCaptureHmacSecret,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -307,6 +315,36 @@ function taigaCaptureKey(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`TAIGA: captured webhook key -> ${filePath}`));
 		console.log(chalk.magenta(`TAIGA: will be auto-detected by 'webhook fire --service taiga'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Formstack webhook HMAC secret capture.
+ *
+ * When n8n registers a Formstack webhook, it generates a random 64-char hex
+ * secret via `randomBytes(32).toString('hex')` and sends it in the POST body
+ * as `hmac_secret`. n8n stores this in workflow static data and uses it to
+ * verify the HMAC-SHA256 signature in the `X-FS-Signature` header.
+ *
+ * The secret is saved to ~/.n8n-node-mocker/formstack-secret.txt
+ *
+ * @see https://developers.formstack.com/reference/webhook
+ */
+function formstackCaptureHmacSecret(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { hmac_secret?: string };
+		const secret = body.hmac_secret;
+		if (!secret || typeof secret !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'formstack-secret.txt');
+		writeFileSync(filePath, secret);
+
+		console.log(chalk.magenta(`FORMSTACK: captured hmac_secret -> ${filePath}`));
+		console.log(chalk.magenta(`FORMSTACK: will be auto-detected by 'webhook fire --service formstack'`));
 	} catch {
 		// Body wasn't JSON
 	}

@@ -1,0 +1,25 @@
+{
+  "FormID": "12345",
+  "UniqueID": "987654321",
+  "29100001": {
+    "value": "John",
+    "type": "text",
+    "label": "First Name"
+  },
+  "29100002": {
+    "value": "Doe",
+    "type": "text",
+    "label": "Last Name"
+  },
+  "29100003": {
+    "value": "john.doe@example.com",
+    "type": "email",
+    "label": "Email"
+  },
+  "29100004": {
+    "value": "This is a test submission from n8n-node-mocker.",
+    "type": "textarea",
+    "label": "Message"
+  },
+  "HandshakeKey": ""
+}

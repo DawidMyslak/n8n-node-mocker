@@ -251,7 +251,7 @@ Each signer has been verified against the official API documentation.
 | Cal.com | HMAC-SHA256 | `x-cal-signature-256` | [API docs](https://cal.com/docs/core-features/webhooks) | Yes | hex |
 | Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | Yes | `t=timestamp,v1=signature` |
 | Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | Yes | hex, signs `v0:timestamp:body` |
-| Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | | `sha256=` prefix + hex |
+| Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | Yes | `sha256=` prefix + hex |
 | MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | | hex (new API), base64 (classic) |
 | Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | | base64 |
 | Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | Yes | hex, secret is hex-encoded key |
@@ -362,6 +362,7 @@ src/
     asana/
     customerio/
     figma/
+    formstack/
     gitlab/
     linear/
     netlify/
@@ -378,6 +379,7 @@ fixtures/                       # Committed fixture files (per-hostname)
   app.asana.com/
   events.twilio.com/
   gitlab.com/
+  www.formstack.com/
 ```
 
 ## How `NODE_EXTRA_CA_CERTS` Works

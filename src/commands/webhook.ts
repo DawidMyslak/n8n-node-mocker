@@ -49,6 +49,7 @@ webhookCommand
 			cal: 'cal-secret.txt',
 			calendly: 'calendly-signing-key.txt',
 			figma: 'figma-passcode.txt',
+			formstack: 'formstack-secret.txt',
 			gitlab: 'gitlab-token.txt',
 			netlify: 'netlify-secret.txt',
 			taiga: 'taiga-key.txt',

@@ -1,0 +1,10 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "success": 1,
+      "id": "100001"
+    }
+  }
+}
