@@ -10,7 +10,6 @@ import { gitlabSigner } from './gitlab.js';
 import { linearSigner } from './linear.js';
 import { mailerLiteSigner } from './mailerlite.js';
 import { mauticSigner } from './mautic.js';
-import { microsoftTeamsSigner } from './microsoft-teams.js';
 import { netlifySigner } from './netlify.js';
 import { onfleetSigner } from './onfleet.js';
 import { taigaSigner } from './taiga.js';
@@ -56,7 +55,6 @@ const signers: WebhookSigner[] = [
 	formstackSigner,
 	mailerLiteSigner,
 	mauticSigner,
-	microsoftTeamsSigner,
 	onfleetSigner,
 	taigaSigner,
 ];

@@ -254,7 +254,6 @@ Each signer has been verified against the official API documentation.
 | Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | | `sha256=` prefix + hex |
 | MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | | hex (new API), base64 (classic) |
 | Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | | base64 |
-| Microsoft Teams | clientState | (in body) | [API docs](https://learn.microsoft.com/en-us/graph/change-notifications-delivery-webhooks) | | Graph change notification clientState |
 | Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | Yes | hex, secret is hex-encoded key |
 | Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | Yes | hex |
 | Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | Yes | base64, signs body + callbackURL |
