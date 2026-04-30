@@ -446,6 +446,70 @@ with Trello). To get the production URL, replace `webhook-test` with
 
 ---
 
+## Onfleet
+
+**Credential type:** Onfleet API
+
+| Field | Value |
+|-------|-------|
+| API Key | `test` |
+| Signing Secret | `test` |
+
+> **Important:** Onfleet's trigger node explicitly rejects localhost webhook
+> URLs. You must start n8n with a fake `WEBHOOK_URL` env var so the webhook
+> URL passes the check. The actual listener remains on localhost.
+
+**Starting n8n (Terminal 2) -- requires `WEBHOOK_URL`:**
+```bash
+WEBHOOK_URL=http://n8n.example.com:5678 \
+NODE_EXTRA_CA_CERTS=~/.n8n-node-mocker/ca.pem \
+HTTPS_PROXY=http://127.0.0.1:9090 \
+NO_PROXY=telemetry.n8n.io,ph.n8n.io \
+pnpm start
+```
+
+**Node configuration:**
+1. Search for **Onfleet** and pick **Onfleet Trigger** from the trigger list
+2. Select your credential
+3. **Trigger On** -- select **Task Created**
+4. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service onfleet \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event taskCreated
+```
+
+> Fire to `http://localhost:5678/...` (the actual listener), **not** the
+> `n8n.example.com` URL shown in the n8n UI.
+
+**What happens behind the scenes:**
+- n8n credential test calls `GET onfleet.com/api/v2/auth/test` -- proxy serves
+  a fixture (HTTP Basic auth with API Key as username)
+- n8n calls `GET onfleet.com/api/v2/webhooks` to check for existing webhooks --
+  proxy returns an empty list
+- n8n calls `POST onfleet.com/api/v2/webhooks` with the webhook URL and trigger
+  key -- proxy returns a mock webhook ID
+- Onfleet normally sends a validation GET request with a `?check=...` query
+  param that n8n echoes back -- this happens via the `setup` webhook handler
+- `webhook fire` computes HMAC-SHA512 using the signing secret (decoded from
+  hex) and sends it in the `X-Onfleet-Signature` header
+
+**Gotchas:**
+- The **localhost rejection** is hardcoded in the Onfleet trigger node. The
+  `WEBHOOK_URL` env var workaround is required -- see above.
+- Onfleet's signing secret is a **hex-encoded key**. The HMAC uses
+  `Buffer.from(secret, 'hex')` to decode it before signing. Using `test`
+  works because both signer and verifier decode it identically.
+- Onfleet uses **HMAC-SHA512** (not SHA-256 like most services).
+- The credential uses **HTTP Basic auth** (API Key as username, empty password).
+
+**Available events:** `taskCreated`, `taskCompleted`, `taskFailed`
+
+---
+
 ## Taiga
 
 **Credential type:** Taiga API

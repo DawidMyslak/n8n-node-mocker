@@ -1,0 +1,77 @@
+{
+	"actionContext": {
+		"type": "WORKER",
+		"id": "mock-worker-001",
+		"name": "Jane Smith"
+	},
+	"adminId": null,
+	"data": {
+		"task": {
+			"id": "mock-task-001",
+			"timeCreated": 1705312200000,
+			"timeLastModified": 1705315800000,
+			"organization": "mock-org-001",
+			"shortId": "abc12345",
+			"trackingURL": "https://onf.lt/abc12345",
+			"worker": "mock-worker-001",
+			"merchant": "mock-org-001",
+			"executor": "mock-org-001",
+			"creator": "dispatcher",
+			"dependencies": [],
+			"state": 3,
+			"completeAfter": null,
+			"completeBefore": null,
+			"pickupTask": false,
+			"notes": "Test delivery",
+			"completionDetails": {
+				"failureNotes": "",
+				"failureReason": "NONE",
+				"events": [],
+				"actions": [],
+				"time": 1705315800000,
+				"firstLocation": [-73.985, 40.748],
+				"lastLocation": [-73.985, 40.748],
+				"unavailableAttachments": []
+			},
+			"feedback": [],
+			"metadata": [],
+			"overrides": {},
+			"quantity": 0,
+			"serviceTime": 0,
+			"recipients": [
+				{
+					"id": "mock-recipient-001",
+					"name": "John Doe",
+					"phone": "+15551234567",
+					"notes": "",
+					"organization": "mock-org-001",
+					"skipSMSNotifications": false,
+					"timeCreated": 1705312200000,
+					"timeLastModified": 1705312200000
+				}
+			],
+			"destination": {
+				"id": "mock-dest-001",
+				"timeCreated": 1705312200000,
+				"timeLastModified": 1705312200000,
+				"location": [-73.985428, 40.748817],
+				"address": {
+					"apartment": "",
+					"state": "New York",
+					"postalCode": "10001",
+					"country": "United States",
+					"city": "New York",
+					"street": "350 5th Ave",
+					"number": "350"
+				},
+				"notes": "",
+				"metadata": []
+			}
+		}
+	},
+	"taskId": "mock-task-001",
+	"time": 1705315800000,
+	"triggerId": 3,
+	"triggerName": "taskCompleted",
+	"workerId": "mock-worker-001"
+}

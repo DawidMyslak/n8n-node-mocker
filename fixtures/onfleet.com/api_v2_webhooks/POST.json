@@ -1,0 +1,13 @@
+{
+	"response": {
+		"statusCode": 200,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"id": "mock-webhook-001",
+			"name": "n8n-webhook",
+			"url": "https://n8n.example.com/webhook/test/webhook",
+			"trigger": 6,
+			"isEnabled": true
+		}
+	}
+}
