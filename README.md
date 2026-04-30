@@ -248,7 +248,6 @@ Each signer has been verified against the official API documentation.
 | Netlify | JWT (HS256) | `x-webhook-signature` | [API docs](https://docs.netlify.com/site-deploys/notifications/#payload-signature) | Yes | JWS token with sha256 of body |
 | Typeform | HMAC-SHA256 | `typeform-signature` | [API docs](https://www.typeform.com/developers/webhooks/secure-your-webhooks/) | | `sha256=` + base64 |
 | AWS SNS | RSA-SHA256 | `x-amz-sns-message-type` | [API docs](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) | | Certificate-based (placeholder) |
-| Box | HMAC-SHA256 | `box-signature-primary` | [API docs](https://box.dev/guides/webhooks/v2/signatures-v2) | | base64, body + timestamp bytes |
 | Cal.com | HMAC-SHA256 | `x-cal-signature-256` | [API docs](https://cal.com/docs/core-features/webhooks) | Yes | hex |
 | Calendly | HMAC-SHA256 | `calendly-webhook-signature` | [API docs](https://developer.calendly.com/api-docs/4c305798a61d3-webhook-signatures) | Yes | `t=timestamp,v1=signature` |
 | Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | Yes | hex, signs `v0:timestamp:body` |

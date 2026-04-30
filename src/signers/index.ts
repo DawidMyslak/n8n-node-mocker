@@ -1,7 +1,6 @@
 import { acuitySchedulingSigner } from './acuity-scheduling.js';
 import { asanaSigner } from './asana.js';
 import { awsSnsSigner } from './aws-sns.js';
-import { boxSigner } from './box.js';
 import { calSigner } from './cal.js';
 import { calendlySigner } from './calendly.js';
 import { customerIoSigner } from './customer-io.js';
@@ -51,7 +50,6 @@ const signers: WebhookSigner[] = [
 	netlifySigner,
 	acuitySchedulingSigner,
 	awsSnsSigner,
-	boxSigner,
 	calSigner,
 	calendlySigner,
 	customerIoSigner,
