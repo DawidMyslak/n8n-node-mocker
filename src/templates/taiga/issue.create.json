@@ -1,0 +1,49 @@
+{
+	"action": "create",
+	"type": "issue",
+	"by": {
+		"id": 1,
+		"username": "test",
+		"full_name": "Mock User"
+	},
+	"date": "2024-01-15T10:30:00.000Z",
+	"data": {
+		"id": 101,
+		"ref": 42,
+		"subject": "Mock issue for testing",
+		"description": "This is a test issue created by n8n-node-mocker",
+		"status": {
+			"id": 1,
+			"name": "New",
+			"slug": "new",
+			"color": "#999999",
+			"is_closed": false
+		},
+		"priority": {
+			"id": 1,
+			"name": "Normal",
+			"color": "#78C36A"
+		},
+		"severity": {
+			"id": 1,
+			"name": "Normal",
+			"color": "#78C36A"
+		},
+		"type": {
+			"id": 1,
+			"name": "Bug",
+			"color": "#E44057"
+		},
+		"assigned_to": null,
+		"project": {
+			"id": 1,
+			"name": "Mock Project",
+			"slug": "mock-project"
+		},
+		"owner": {
+			"id": 1,
+			"username": "test",
+			"full_name": "Mock User"
+		}
+	}
+}

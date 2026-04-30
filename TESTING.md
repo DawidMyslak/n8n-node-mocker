@@ -446,6 +446,64 @@ with Trello). To get the production URL, replace `webhook-test` with
 
 ---
 
+## Taiga
+
+**Credential type:** Taiga API
+
+| Field | Value |
+|-------|-------|
+| Username | `test` |
+| Password | `test` |
+| Environment | **Cloud** |
+
+**Node configuration:**
+1. Search for **Taiga** and pick **Taiga Trigger** from the trigger list
+2. Select your credential
+3. **Project Name or ID** -- select **Mock Project** from the dropdown
+   (the proxy serves a fixture for this)
+4. **Resources** -- select **Issue** (or leave as **All**)
+5. **Operations** -- select **Create** (or leave as **All**)
+6. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service taiga \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event issue.create
+```
+
+**What happens behind the scenes:**
+- n8n calls `POST api.taiga.io/api/v1/auth` with `{username, password}` to
+  get an auth token -- proxy returns a mock token (this is called before
+  **every** API request, not just once)
+- n8n calls `GET api.taiga.io/api/v1/users/me` to get the user ID -- proxy
+  serves a fixture
+- n8n calls `GET api.taiga.io/api/v1/projects?member=1` to populate the
+  project dropdown -- proxy returns a mock project
+- n8n calls `GET api.taiga.io/api/v1/webhooks` to check for existing webhooks
+  -- proxy returns an empty list
+- n8n calls `POST api.taiga.io/api/v1/webhooks` with a `key` field computed
+  as `MD5(username + "," + password)` -- proxy returns a mock webhook **and**
+  captures the key to `~/.n8n-node-mocker/taiga-key.txt`
+- `webhook fire` auto-detects the captured key and uses it to compute the
+  HMAC-SHA1 hex signature in the `X-TAIGA-WEBHOOK-SIGNATURE` header
+
+**Gotchas:**
+- Taiga uses a **deterministic key** derived from credentials: `MD5("test,test")`.
+  It's still captured dynamically via service hook for consistency.
+- Taiga authenticates with **username/password** -- every API request triggers
+  a `POST /api/v1/auth` call to get a fresh bearer token.
+- The webhook payload has `action` (create/change/delete) and `type`
+  (issue/task/userstory/milestone/wikipage) fields that n8n uses to filter
+  events based on the Resources and Operations parameters.
+- Cloud environment uses `api.taiga.io`. Self-hosted instances would need
+  their own hostname-specific fixtures.
+
+**Available events:** `issue.create`, `task.create`, `userstory.create`
+
+---
+
 ## Twilio
 
 **Credential type:** Twilio API
@@ -653,8 +711,8 @@ npx n8n-node-mocker webhook fire \
 **Webhook returns 401 Unauthorized:**
 - For static secrets: ensure the credential in n8n and the mocker config
   both use `test`
-- For dynamic secrets (Cal.com, Calendly, GitLab, Figma, Netlify): ensure the
-  proxy captured the secret during webhook registration -- check for the capture
-  log message
+- For dynamic secrets (Cal.com, Calendly, GitLab, Figma, Netlify, Taiga):
+  ensure the proxy captured the secret during webhook registration -- check
+  for the capture log message
 - For Twilio: ensure the `Auth Token` in n8n credentials matches the
   `signingSecret` in the mocker config (both should be `test`)

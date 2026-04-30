@@ -77,6 +77,14 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: calCaptureSecret,
 	},
+	{
+		match: (ctx) =>
+			ctx.hostname === 'api.taiga.io' &&
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/webhooks') &&
+			ctx.bodyStr !== undefined,
+		run: taigaCaptureKey,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -269,6 +277,36 @@ function calCaptureSecret(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`CAL: captured webhook secret -> ${filePath}`));
 		console.log(chalk.magenta(`CAL: will be auto-detected by 'webhook fire --service cal'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Taiga webhook key capture.
+ *
+ * When n8n registers a Taiga webhook, it computes a key as
+ * `MD5(username + "," + password)` and sends it in the POST body as `key`.
+ * n8n stores this in workflow static data and uses it to verify the
+ * HMAC-SHA1 signature in the `X-TAIGA-WEBHOOK-SIGNATURE` header.
+ *
+ * The key is saved to ~/.n8n-node-mocker/taiga-key.txt
+ *
+ * @see https://docs.taiga.io/webhooks.html
+ */
+function taigaCaptureKey(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { key?: string };
+		const key = body.key;
+		if (!key || typeof key !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'taiga-key.txt');
+		writeFileSync(filePath, key);
+
+		console.log(chalk.magenta(`TAIGA: captured webhook key -> ${filePath}`));
+		console.log(chalk.magenta(`TAIGA: will be auto-detected by 'webhook fire --service taiga'`));
 	} catch {
 		// Body wasn't JSON
 	}

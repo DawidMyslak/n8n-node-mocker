@@ -1,0 +1,12 @@
+{
+	"response": {
+		"statusCode": 201,
+		"headers": { "content-type": "application/json" },
+		"body": {
+			"id": 1,
+			"name": "n8n-webhook",
+			"url": "https://n8n.example.com/webhook/test/webhook",
+			"key": "mock-key"
+		}
+	}
+}

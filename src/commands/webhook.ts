@@ -51,6 +51,7 @@ webhookCommand
 			figma: 'figma-passcode.txt',
 			gitlab: 'gitlab-token.txt',
 			netlify: 'netlify-secret.txt',
+			taiga: 'taiga-key.txt',
 		};
 		const secretFile = dynamicSecretFiles[opts.service.toLowerCase()];
 		if (secretFile) {

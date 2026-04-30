@@ -40,6 +40,7 @@ src/
     gitlab/
     linear/
     netlify/
+    taiga/
     trello/
     twilio/
     typeform/
@@ -55,6 +56,7 @@ fixtures/                   Committed fixture files (per-hostname)
   api.twilio.com/           Twilio account verification
   app.asana.com/            Asana workspaces, webhooks
   calendly.com/             Calendly v1 API (credential test, hooks)
+  api.taiga.io/             Taiga API (auth, users, projects, webhooks)
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
   gitlab.com/               GitLab project hooks
 ```
