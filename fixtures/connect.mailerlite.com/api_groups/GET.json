@@ -1,0 +1,47 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "data": [
+        {
+          "id": "12345678901234567",
+          "name": "Mock Subscribers",
+          "active_count": 42,
+          "sent_count": 100,
+          "opens_count": 80,
+          "open_rate": {
+            "float": 80.0,
+            "string": "80%"
+          },
+          "clicks_count": 30,
+          "click_rate": {
+            "float": 30.0,
+            "string": "30%"
+          },
+          "unsubscribed_count": 2,
+          "unconfirmed_count": 0,
+          "bounced_count": 1,
+          "junk_count": 0,
+          "created_at": "2024-01-01 00:00:00"
+        }
+      ],
+      "links": {
+        "first": "https://connect.mailerlite.com/api/groups?page=1",
+        "last": "https://connect.mailerlite.com/api/groups?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "path": "https://connect.mailerlite.com/api/groups",
+        "per_page": 25,
+        "to": 1,
+        "total": 1,
+        "next_cursor": null
+      }
+    }
+  }
+}

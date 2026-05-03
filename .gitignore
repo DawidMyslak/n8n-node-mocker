@@ -4,3 +4,4 @@ dist/
 .n8n-node-mocker/
 fixtures/local/
 config.yaml
+build.log

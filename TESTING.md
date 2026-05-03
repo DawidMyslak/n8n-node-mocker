@@ -667,6 +667,57 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## MailerLite
+
+**Credential type:** Mailer Lite API
+
+| Field | Value |
+|-------|-------|
+| API Key | `test` |
+| Classic API | **unchecked** (false) |
+
+> **Important:** Uncheck the "Classic API" checkbox. The classic API (V1) does
+> not support webhook signature verification. The new API (V2) does.
+
+**Node configuration:**
+1. Search for **MailerLite** and pick **MailerLite Trigger** from the trigger list
+2. Select your credential
+3. **Events** -- select **Subscriber Created** (or any events you want)
+4. Click **Listen for test event**
+
+**Fire the webhook (Terminal 3):**
+```bash
+npx n8n-node-mocker webhook fire \
+  --service mailerlite \
+  --url http://localhost:5678/webhook-test/<id>/webhook \
+  --event subscriber.created
+```
+
+**What happens behind the scenes:**
+- n8n credential test calls `GET connect.mailerlite.com/api/groups` -- proxy
+  serves a fixture with a mock group (pagination envelope included)
+- n8n calls `GET connect.mailerlite.com/api/webhooks` to check for existing
+  webhooks -- proxy returns an empty `data: []` list
+- n8n calls `POST connect.mailerlite.com/api/webhooks` with `{ url, events }` --
+  proxy returns a mock webhook with `data.secret: "test"`. n8n stores this
+  secret in workflow static data for HMAC verification.
+- `webhook fire` uses the config secret (`test`) to compute the HMAC-SHA256
+  hex signature in the `Signature` header -- matches the secret from the fixture
+
+**Gotchas:**
+- Unlike most services where n8n generates the secret, MailerLite's **API
+  returns the secret** in the webhook creation response (`data.secret`). The
+  proxy fixture includes `"secret": "test"` so it matches the config value.
+- The "Classic API" checkbox in credentials **must be unchecked** for V2. If
+  checked, the credential test hits `api.mailerlite.com` (different host) and
+  the trigger node V1 has no signature verification.
+- MailerLite V2 uses `Authorization: Bearer` header, V1 uses `X-MailerLite-ApiKey`.
+- The webhook payload wraps events in a `fields` array (V2) or `events` array (V1).
+
+**Available events:** `subscriber.created`, `subscriber.unsubscribed`, `campaign.sent`
+
+---
+
 ## Linear
 
 **Credential type:** Linear API

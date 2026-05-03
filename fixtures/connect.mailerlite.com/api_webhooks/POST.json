@@ -1,0 +1,17 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "data": {
+        "id": "mock-wh-001",
+        "url": "http://localhost:5678/webhook-test/mock-id/webhook",
+        "events": ["subscriber.created"],
+        "secret": "test",
+        "enabled": true,
+        "created_at": "2024-01-15T12:00:00.000000Z",
+        "updated_at": "2024-01-15T12:00:00.000000Z"
+      }
+    }
+  }
+}
