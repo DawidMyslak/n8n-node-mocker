@@ -1,0 +1,13 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "hook": {
+        "id": 1,
+        "name": "n8n-webhook",
+        "isPublished": true
+      }
+    }
+  }
+}

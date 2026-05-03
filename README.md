@@ -253,7 +253,7 @@ Each signer has been verified against the official API documentation.
 | Customer.io | HMAC-SHA256 | `x-cio-signature` | [API docs](https://docs.customer.io/messaging/webhooks-action/) | Yes | hex, signs `v0:timestamp:body` |
 | Formstack | HMAC-SHA256 | `x-fs-signature` | [API docs](https://developers.formstack.com/reference/webhook) | Yes | `sha256=` prefix + hex |
 | MailerLite | HMAC-SHA256 | `signature` | [API docs](https://developers.mailerlite.com/docs/webhooks) | Yes | hex (new API), base64 (classic) |
-| Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | | base64 |
+| Mautic | HMAC-SHA256 | `webhook-signature` | [API docs](https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html) | Yes | base64 |
 | Onfleet | HMAC-SHA512 | `x-onfleet-signature` | [API docs](https://docs.onfleet.com/reference/secrets) | Yes | hex, secret is hex-encoded key |
 | Taiga | HMAC-SHA1 | `x-taiga-webhook-signature` | [API docs](https://docs.taiga.io/webhooks.html) | Yes | hex |
 | Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | Yes | base64, signs body + callbackURL |
@@ -366,6 +366,7 @@ src/
     gitlab/
     linear/
     mailerlite/
+    mautic/
     netlify/
     trello/
     twilio/
@@ -381,6 +382,7 @@ fixtures/                       # Committed fixture files (per-hostname)
   connect.mailerlite.com/
   events.twilio.com/
   gitlab.com/
+  test.mautic.net/
   www.formstack.com/
 ```
 

@@ -1,0 +1,29 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "hook": {
+        "id": 1,
+        "name": "n8n-webhook:/webhook-test/mock-id/webhook",
+        "description": "n8n webhook",
+        "webhookUrl": "http://localhost:5678/webhook-test/mock-id/webhook",
+        "secret": "mock-secret",
+        "eventsOrderbyDir": "ASC",
+        "isPublished": true,
+        "publishUp": null,
+        "publishDown": null,
+        "dateAdded": "2024-01-15T12:00:00+00:00",
+        "dateModified": null,
+        "modifiedBy": null,
+        "modifiedByUser": null,
+        "createdBy": 1,
+        "createdByUser": "Test User",
+        "category": null,
+        "triggers": [
+          "mautic.lead_post_save_new"
+        ]
+      }
+    }
+  }
+}

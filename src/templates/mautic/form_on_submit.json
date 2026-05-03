@@ -1,0 +1,24 @@
+{
+  "mautic.form_on_submit": {
+    "submission": {
+      "id": 54321,
+      "form": {
+        "id": 1,
+        "name": "Contact Form",
+        "alias": "contact_form"
+      },
+      "ipAddress": {
+        "ipAddress": "127.0.0.1"
+      },
+      "dateSubmitted": "2024-01-15T12:00:00+00:00",
+      "referer": "https://example.com/contact",
+      "results": {
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "email": "jane.smith@example.com",
+        "message": "Hello from n8n-node-mocker!"
+      }
+    }
+  },
+  "timestamp": "2024-01-15T12:00:00+00:00"
+}

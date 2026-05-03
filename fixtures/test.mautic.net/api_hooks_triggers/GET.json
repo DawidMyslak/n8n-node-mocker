@@ -1,0 +1,38 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "triggers": {
+        "mautic.lead_post_save_new": {
+          "label": "When a contact is created",
+          "description": "Fires when a new contact is created"
+        },
+        "mautic.lead_post_save_update": {
+          "label": "When a contact is updated",
+          "description": "Fires when a contact is updated"
+        },
+        "mautic.lead_post_delete": {
+          "label": "When a contact is deleted",
+          "description": "Fires when a contact is deleted"
+        },
+        "mautic.email_on_send": {
+          "label": "When an email is sent",
+          "description": "Fires when an email is sent to a contact"
+        },
+        "mautic.email_on_open": {
+          "label": "When an email is opened",
+          "description": "Fires when a contact opens an email"
+        },
+        "mautic.form_on_submit": {
+          "label": "When a form is submitted",
+          "description": "Fires when a form is submitted"
+        },
+        "mautic.page_on_hit": {
+          "label": "When a page is hit",
+          "description": "Fires when a tracked page is visited"
+        }
+      }
+    }
+  }
+}

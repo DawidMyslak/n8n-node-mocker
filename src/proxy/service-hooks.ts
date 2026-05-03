@@ -93,6 +93,13 @@ const hooks: ServiceHook[] = [
 			ctx.bodyStr !== undefined,
 		run: formstackCaptureHmacSecret,
 	},
+	{
+		match: (ctx) =>
+			ctx.method === 'POST' &&
+			ctx.path.endsWith('/api/hooks/new') &&
+			ctx.bodyStr !== undefined,
+		run: mauticCaptureSecret,
+	},
 ];
 
 export function runPostResponseHooks(ctx: ServiceHookContext): void {
@@ -345,6 +352,38 @@ function formstackCaptureHmacSecret(ctx: ServiceHookContext): void {
 
 		console.log(chalk.magenta(`FORMSTACK: captured hmac_secret -> ${filePath}`));
 		console.log(chalk.magenta(`FORMSTACK: will be auto-detected by 'webhook fire --service formstack'`));
+	} catch {
+		// Body wasn't JSON
+	}
+}
+
+/**
+ * Mautic webhook secret capture.
+ *
+ * When n8n registers a Mautic webhook, it generates a random 64-char hex
+ * secret via `randomBytes(32).toString('hex')` and sends it in the POST body
+ * as `secret`. n8n stores this in workflow static data and uses it to verify
+ * the HMAC-SHA256 (base64) signature in the `Webhook-Signature` header.
+ *
+ * Matches on path rather than hostname since Mautic uses a user-provided URL.
+ *
+ * The secret is saved to ~/.n8n-node-mocker/mautic-secret.txt
+ *
+ * @see https://devdocs.mautic.org/en/5.x/webhooks/getting_started.html
+ */
+function mauticCaptureSecret(ctx: ServiceHookContext): void {
+	try {
+		const body = JSON.parse(ctx.bodyStr!) as { secret?: string };
+		const secret = body.secret;
+		if (!secret || typeof secret !== 'string') return;
+
+		const dir = expandHome(ctx.config.caDir);
+		mkdirSync(dir, { recursive: true });
+		const filePath = join(dir, 'mautic-secret.txt');
+		writeFileSync(filePath, secret);
+
+		console.log(chalk.magenta(`MAUTIC: captured webhook secret -> ${filePath}`));
+		console.log(chalk.magenta(`MAUTIC: will be auto-detected by 'webhook fire --service mautic'`));
 	} catch {
 		// Body wasn't JSON
 	}

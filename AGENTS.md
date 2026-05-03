@@ -41,6 +41,7 @@ src/
     gitlab/
     linear/
     mailerlite/
+    mautic/
     netlify/
     onfleet/
     taiga/
@@ -64,6 +65,7 @@ fixtures/                   Committed fixture files (per-hostname)
   onfleet.com/              Onfleet API (auth test, webhooks)
   events.twilio.com/        Twilio Event Streams (Sinks, Subscriptions)
   gitlab.com/               GitLab project hooks
+  test.mautic.net/          Mautic API (users, hooks/triggers, webhooks)
   www.formstack.com/        Formstack forms + webhook management
 ```
 

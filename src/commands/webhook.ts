@@ -51,6 +51,7 @@ webhookCommand
 			figma: 'figma-passcode.txt',
 			formstack: 'formstack-secret.txt',
 			gitlab: 'gitlab-token.txt',
+			mautic: 'mautic-secret.txt',
 			netlify: 'netlify-secret.txt',
 			taiga: 'taiga-key.txt',
 		};

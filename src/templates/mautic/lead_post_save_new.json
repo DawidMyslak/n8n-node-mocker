@@ -1,0 +1,27 @@
+{
+  "mautic.lead_post_save_new": {
+    "contact": {
+      "id": 12345,
+      "isPublished": true,
+      "dateAdded": "2024-01-15T12:00:00+00:00",
+      "createdBy": 1,
+      "createdByUser": "Test User",
+      "dateModified": null,
+      "modifiedBy": null,
+      "modifiedByUser": null,
+      "points": 0,
+      "lastActive": null,
+      "dateIdentified": "2024-01-15T12:00:00+00:00",
+      "color": null,
+      "fields": {
+        "core": {
+          "firstname": { "id": "2", "label": "First Name", "value": "John" },
+          "lastname": { "id": "3", "label": "Last Name", "value": "Doe" },
+          "email": { "id": "6", "label": "Email", "value": "john.doe@example.com" },
+          "company": { "id": "7", "label": "Primary company", "value": "Acme Inc" }
+        }
+      }
+    }
+  },
+  "timestamp": "2024-01-15T12:00:00+00:00"
+}
