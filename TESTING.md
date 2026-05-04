@@ -907,6 +907,21 @@ npx n8n-node-mocker webhook fire \
 
 ---
 
+## Services That Cannot Be Tested Locally
+
+Some n8n trigger nodes cannot be tested with n8n-node-mocker due to
+authentication or infrastructure requirements that bypass the proxy.
+
+| Service | Blocker | Linear Ticket |
+|---------|---------|---------------|
+| **Box** | OAuth2-only authentication. The browser-based OAuth flow bypasses the HTTPS proxy entirely, so n8n never gets valid credentials to make API calls through the proxy. The signing key fields (`signingKeyPrimary`, `signingKeySecondary`) are static credential fields, but without working OAuth2, the webhook can't be registered. | [NODE-4302](https://linear.app/n8n/issue/NODE-4302) |
+| **Microsoft Teams** | OAuth2-only authentication (same browser bypass issue as Box). Additionally, Microsoft Graph requires **HTTPS** webhook URLs -- local `http://localhost` URLs are explicitly rejected. Even with `WEBHOOK_URL`, the notification endpoint must be publicly accessible HTTPS. | [NODE-4312](https://linear.app/n8n/issue/NODE-4312) |
+
+These services require **manual testing** against real API environments. Their
+signers have been removed from n8n-node-mocker to avoid confusion.
+
+---
+
 ## Troubleshooting
 
 **n8n is extremely slow after starting with the proxy:**

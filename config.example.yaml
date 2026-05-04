@@ -36,8 +36,6 @@ services:
     signingSecret: "test"
   awssns:
     signingSecret: "test"
-  box:
-    signingSecret: "test"
   cal:
     signingSecret: "test"
   calendly:
@@ -49,8 +47,6 @@ services:
   mailerlite:
     signingSecret: "test"
   mautic:
-    signingSecret: "test"
-  microsoftteams:
     signingSecret: "test"
   onfleet:
     signingSecret: "test"

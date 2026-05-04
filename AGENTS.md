@@ -280,11 +280,11 @@ Each hook checks if its `match` function returns true, then runs.
 | Simple HMAC | sha256 | hex | `linear.ts`, `cal.ts`, `customerio.ts` |
 | HMAC + prefix | sha256 | base64 | `typeform.ts` (`sha256=` prefix) |
 | HMAC + timestamp in data | sha256 | hex | `figma.ts`, `calendly.ts` |
-| HMAC + timestamp header | sha256 | base64 | `box.ts` |
+| HMAC + timestamp header | sha256 | base64 | — (removed) |
 | HMAC-SHA1 | sha1 | base64/hex | `trello.ts`, `taiga.ts` |
 | HMAC-SHA512 | sha512 | hex | `onfleet.ts` |
 | Plain token | n/a | n/a | `gitlab.ts` |
-| Body patch | varies | varies | `linear.ts` (webhookTimestamp), `microsoft-teams.ts` (clientState) |
+| Body patch | varies | varies | `linear.ts` (webhookTimestamp) |
 | URL in signing data | sha1 | base64 | `twilio.ts`, `trello.ts` |
 | Query params on URL | sha1 | base64 | `twilio.ts` (bodySHA256 appended to URL) |
 | JWT (JWS) | HS256 | base64 | `netlify.ts` |
