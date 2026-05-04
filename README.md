@@ -259,6 +259,20 @@ Each signer has been verified against the official API documentation.
 | Trello | HMAC-SHA1 | `x-trello-webhook` | [API docs](https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/) | Yes | base64, signs body + callbackURL |
 | Twilio | HMAC-SHA1 | `x-twilio-signature` | [API docs](https://www.twilio.com/docs/usage/webhooks/webhooks-security) | Yes | base64, bodySHA256 query param + URL signing |
 
+### Services That Cannot Be Tested Locally
+
+Some services cannot be tested with n8n-node-mocker due to authentication
+or infrastructure requirements that bypass the proxy:
+
+| Service | Reason |
+|---------|--------|
+| **Box** | OAuth2-only -- browser auth flow bypasses the proxy |
+| **Microsoft Teams** | OAuth2-only + requires HTTPS webhook URLs |
+
+These require manual testing against real APIs (e.g. using ngrok for HTTPS
+tunneling). See [TESTING.md](TESTING.md#services-that-cannot-be-tested-locally)
+for details and Linear ticket references.
+
 ## Testing Each Service
 
 See **[TESTING.md](TESTING.md)** for step-by-step instructions to test
