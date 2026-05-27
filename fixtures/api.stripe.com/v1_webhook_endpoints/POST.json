@@ -1,0 +1,20 @@
+{
+  "response": {
+    "statusCode": 200,
+    "headers": { "content-type": "application/json" },
+    "body": {
+      "id": "we_1PBse2589O8KAxCG",
+      "object": "webhook_endpoint",
+      "api_version": "2024-06-20",
+      "application": null,
+      "created": 1700000000,
+      "description": null,
+      "enabled_events": ["*"],
+      "livemode": false,
+      "metadata": {},
+      "secret": "whsec_test",
+      "status": "enabled",
+      "url": "https://n8n.example.com/webhook/stripe"
+    }
+  }
+}

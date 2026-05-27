@@ -13,8 +13,8 @@ fallbackMode: auto
 # Per-service signing secrets.
 # These must match the secrets configured in n8n credentials
 # for signature verification to pass.
-# Default: "test" for all services -- just type "test" in n8n's
-# signing secret field and it works.
+# Default: "test" for most services. Stripe uses "whsec_test" to match
+# the webhook endpoint secret returned by the Stripe fixture.
 services:
   linear:
     signingSecret: "test"
@@ -50,5 +50,7 @@ services:
     signingSecret: "test"
   onfleet:
     signingSecret: "test"
+  stripe:
+    signingSecret: "whsec_test"
   taiga:
     signingSecret: "test"

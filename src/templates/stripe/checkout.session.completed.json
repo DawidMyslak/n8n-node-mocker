@@ -1,0 +1,32 @@
+{
+  "id": "evt_1PBse2589O8KAxCH",
+  "object": "event",
+  "api_version": "2024-06-20",
+  "created": 1700000000,
+  "type": "checkout.session.completed",
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_def456",
+    "idempotency_key": null
+  },
+  "data": {
+    "object": {
+      "id": "cs_test_abc123def456",
+      "object": "checkout.session",
+      "amount_total": 3000,
+      "currency": "usd",
+      "customer": "cus_QRbz0RbPklexMQ",
+      "customer_details": {
+        "email": "jane@example.com",
+        "name": "Jane Doe"
+      },
+      "mode": "payment",
+      "payment_intent": "pi_3PBse2589O8KAxCG",
+      "payment_status": "paid",
+      "status": "complete",
+      "success_url": "https://example.com/success",
+      "url": null
+    }
+  }
+}

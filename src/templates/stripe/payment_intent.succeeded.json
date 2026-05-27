@@ -1,0 +1,26 @@
+{
+  "id": "evt_1PBse2589O8KAxCI",
+  "object": "event",
+  "api_version": "2024-06-20",
+  "created": 1700000000,
+  "type": "payment_intent.succeeded",
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_ghi789",
+    "idempotency_key": null
+  },
+  "data": {
+    "object": {
+      "id": "pi_3PBse2589O8KAxCG",
+      "object": "payment_intent",
+      "amount": 2000,
+      "amount_received": 2000,
+      "currency": "usd",
+      "customer": "cus_QRbz0RbPklexMQ",
+      "description": "Subscription creation",
+      "payment_method": "pm_1PBse2589O8KAxCG",
+      "status": "succeeded"
+    }
+  }
+}

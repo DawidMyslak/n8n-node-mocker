@@ -1,0 +1,29 @@
+{
+  "id": "evt_1PBse2589O8KAxCK",
+  "object": "event",
+  "api_version": "2024-06-20",
+  "created": 1700000000,
+  "type": "charge.succeeded",
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_mno345",
+    "idempotency_key": null
+  },
+  "data": {
+    "object": {
+      "id": "ch_3PBse2589O8KAxCG",
+      "object": "charge",
+      "amount": 2000,
+      "amount_captured": 2000,
+      "currency": "usd",
+      "customer": "cus_QRbz0RbPklexMQ",
+      "description": "Payment for invoice",
+      "paid": true,
+      "payment_intent": "pi_3PBse2589O8KAxCG",
+      "payment_method": "pm_1PBse2589O8KAxCG",
+      "receipt_email": "jane@example.com",
+      "status": "succeeded"
+    }
+  }
+}

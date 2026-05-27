@@ -15,6 +15,7 @@ import { onfleetSigner } from './onfleet.js';
 import { taigaSigner } from './taiga.js';
 import { trelloSigner } from './trello.js';
 import { twilioSigner } from './twilio.js';
+import { stripeSigner } from './stripe.js';
 import { typeformSigner } from './typeform.js';
 
 export interface SignMeta {
@@ -56,6 +57,7 @@ const signers: WebhookSigner[] = [
 	mailerLiteSigner,
 	mauticSigner,
 	onfleetSigner,
+	stripeSigner,
 	taigaSigner,
 ];
 
