@@ -27,4 +27,20 @@ describe('stripeSigner', () => {
 
 		expect(header).toMatch(/^t=\d+,v1=[0-9a-f]{64}$/);
 	});
+
+	it('converts millisecond timestamps to Unix seconds', () => {
+		const secret = 'whsec_test_secret';
+		const payload = Buffer.from(JSON.stringify({ type: 'invoice.paid' }));
+		const timestamp = 1700000000123;
+		const expectedTimestamp = 1700000000;
+
+		const result = stripeSigner.sign(payload, secret, { timestamp });
+
+		const expectedData = `${expectedTimestamp}.${payload.toString('utf-8')}`;
+		const expectedSig = createHmac('sha256', secret).update(expectedData).digest('hex');
+
+		expect(result.headers['stripe-signature']).toBe(
+			`t=${expectedTimestamp},v1=${expectedSig}`,
+		);
+	});
 });

@@ -12,7 +12,7 @@
       "enabled_events": ["*"],
       "livemode": false,
       "metadata": {},
-      "secret": "whsec_test",
+      "secret": "test",
       "status": "enabled",
       "url": "https://n8n.example.com/webhook/stripe"
     }

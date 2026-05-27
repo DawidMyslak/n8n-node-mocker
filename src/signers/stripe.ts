@@ -2,6 +2,10 @@ import { createHmac } from 'node:crypto';
 
 import type { WebhookSigner, SignResult, SignMeta } from './index.js';
 
+function toUnixSeconds(timestamp: number): number {
+	return timestamp > 1e10 ? Math.floor(timestamp / 1000) : Math.floor(timestamp);
+}
+
 /**
  * Stripe signs webhooks using HMAC-SHA256 of `timestamp.body`, hex-encoded.
  * The header format is `Stripe-Signature: t=<unix_ts>,v1=<sig>`.
@@ -16,7 +20,8 @@ export const stripeSigner: WebhookSigner = {
 	signatureHeader: 'stripe-signature',
 
 	sign(payload: Buffer, secret: string, meta?: SignMeta): SignResult {
-		const timestamp = meta?.timestamp ?? Math.floor(Date.now() / 1000);
+		const timestamp =
+			meta?.timestamp === undefined ? Math.floor(Date.now() / 1000) : toUnixSeconds(meta.timestamp);
 		const data = `${timestamp}.${payload.toString('utf-8')}`;
 		const hmac = createHmac('sha256', secret);
 		hmac.update(data);
