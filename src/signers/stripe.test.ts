@@ -5,7 +5,7 @@ import { stripeSigner } from './stripe.js';
 
 describe('stripeSigner', () => {
 	it('produces a valid HMAC-SHA256 hex signature in t=...,v1=... format', () => {
-		const secret = 'whsec_test_secret';
+		const secret = 'test-secret';
 		const payload = Buffer.from(JSON.stringify({ type: 'invoice.paid' }));
 		const timestamp = 1700000000;
 
@@ -19,7 +19,7 @@ describe('stripeSigner', () => {
 	});
 
 	it('uses current time when no timestamp is provided', () => {
-		const secret = 'whsec_test';
+		const secret = 'test';
 		const payload = Buffer.from('{}');
 
 		const result = stripeSigner.sign(payload, secret);
@@ -29,7 +29,7 @@ describe('stripeSigner', () => {
 	});
 
 	it('converts millisecond timestamps to Unix seconds', () => {
-		const secret = 'whsec_test_secret';
+		const secret = 'test-secret';
 		const payload = Buffer.from(JSON.stringify({ type: 'invoice.paid' }));
 		const timestamp = 1700000000123;
 		const expectedTimestamp = 1700000000;

@@ -40,7 +40,7 @@ const DEFAULT_CONFIG: Config = {
 		mailerlite: { signingSecret: 'test' },
 		mautic: { signingSecret: 'test' },
 		onfleet: { signingSecret: 'test' },
-		stripe: { signingSecret: 'whsec_test' },
+		stripe: { signingSecret: 'test' },
 		taiga: { signingSecret: 'test' },
 	},
 };
